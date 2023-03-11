@@ -1,4 +1,4 @@
-argeo-tp-build (2.3.5~4.26) unstable; urgency=medium
+argeo-tp-build (2.3.0~4.26) unstable; urgency=medium
 
   * Initial release based on Eclipse release 4.46 (ECJ 3.32)
 
