@@ -11,24 +11,27 @@ SLF4J_VERSION=1.7.36
 JAVA_SOURCE=17
 JAVA_TARGET=17
 
+A2_CATEGORY_SDK = org.argeo.tp.sdk
+A2_CATEGORY_LOG = org.argeo.tp.log
+
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
 #SDK_BUILD_BASE ?= ./output
 
 ECJ_BASE=$(BOOTSTRAP_BASE)/ecj
-ECJ_SRC=$(SDK_SRC_BASE)/org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch/src
+ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/org.eclipse.jdt.core.compiler.batch/src
 
 SLF4J_BASE=$(BOOTSTRAP_BASE)/slf4j
 SLF4J_SRC=$(BOOTSTRAP_BASE)/slf4j-src
-SYSLOGGER_SRC=$(SDK_SRC_BASE)/org.argeo.tp.sdk/org.argeo.tp.syslogger/src
+SYSLOGGER_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_LOG)/org.argeo.tp.syslogger/src
 
 BNDLIB_BASE=$(BOOTSTRAP_BASE)/bndlib
-BNDLIB_SRC=$(SDK_SRC_BASE)/org.argeo.tp.sdk/biz.aQute.bndlib/src
+BNDLIB_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/biz.aQute.bndlib/src
 
 OSGI_BASE=$(BOOTSTRAP_BASE)/osgi
 
 OSGI_ANNOTATION_BASE=$(BOOTSTRAP_BASE)/osgi-annotation
-OSGI_ANNOTATION_SRC=$(SDK_SRC_BASE)/org.argeo.tp.sdk/osgi.annotation/src
+OSGI_ANNOTATION_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/osgi.annotation/src
 
 SOURCE_ARCHIVES=\
 $(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar \
@@ -47,7 +50,6 @@ ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BASE):$(SLF4J_BASE):$(OSGI_ANNOTATION_BASE) \
 
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BASE):$(SLF4J_BASE):$(OSGI_ANNOTATION_BASE):$(BNDLIB_BASE) $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
-A2_CATEGORY = org.argeo.tp.sdk
 
 all: osgi
 
@@ -68,8 +70,10 @@ build-bndlib: build-ecj build-slf4j build-osgi-annotation
 	$(ECJ_INTERMEDIATE) $(BNDLIB_SRC) -d $(BNDLIB_BASE)
 
 osgi: build-ecj build-slf4j build-osgi-annotation build-bndlib
-	cd $(A2_CATEGORY) && $(ARGEO_MAKE) all --category $(A2_CATEGORY) \
-	--bundles org.eclipse.jdt.core.compiler.batch org.argeo.tp.syslogger osgi.annotation biz.aQute.bndlib
+	cd $(A2_CATEGORY_LOG) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_LOG) \
+	--bundles org.argeo.tp.syslogger
+	cd $(A2_CATEGORY_SDK) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_SDK) \
+	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
 
 clean:
 	$(RM) -rf $(BOOTSTRAP_BASE)
