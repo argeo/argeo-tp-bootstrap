@@ -29,7 +29,7 @@ $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 all: ecj-build bndlib-build	
-	make -C org.argeo.tp.build all
+	make -C org.argeo.tp.sdk all
 
 ecj-build:
 	mkdir -p $(BOOTSTRAP_BASE)
@@ -48,7 +48,7 @@ clean:
 	$(RM) -rf $(BOOTSTRAP_BASE)
 	find $(ECJ_BASE) -name "*.class" -type f -exec rm -f {} \;
 	find $(BNDLIB_BASE) -name "*.class" -type f -exec rm -f {} \;
-	make -C org.argeo.tp.build clean
+	make -C org.argeo.tp.sdk clean
 
 distclean:
 	$(RM) -f sdk.mk
@@ -57,15 +57,15 @@ distclean:
 clean-sources:
 	$(RM) -rf $(ECJ_BASE)
 	$(RM) -rf $(BNDLIB_BASE)
-	$(RM) -rf org.argeo.tp.build/biz.aQute.bndlib/src
-	$(RM) -rf org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch/src
+	$(RM) -rf org.argeo.tp.sdk/biz.aQute.bndlib/src
+	$(RM) -rf org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch/src
 	
 deb-source: distclean clean-sources bootstrap-prepare-sources
 	debuild --no-sign -S
 	$(RM) -f debian/files
 	$(RM) -rf $(ECJ_BASE)
 	$(RM) -rf $(BNDLIB_BASE)
-	$(RM) -rf org.argeo.tp.build/biz.aQute.bndlib/src
+	$(RM) -rf org.argeo.tp.sdk/biz.aQute.bndlib/src
 
 bootstrap-prepare-sources: bootstrap-download-sources
 	## ECJ
@@ -123,8 +123,8 @@ bootstrap-prepare-sources: bootstrap-download-sources
 	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
 	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/junit
 
-	#mkdir -p org.argeo.tp.build/biz.aQute.bndlib/src
-	#cp -r ../rebuild/org.argeo.tp/org.argeo.ext.slf4j/src/* org.argeo.tp.build/biz.aQute.bndlib/src
+	#mkdir -p org.argeo.tp.sdk/biz.aQute.bndlib/src
+	#cp -r ../rebuild/org.argeo.tp/org.argeo.ext.slf4j/src/* org.argeo.tp.sdk/biz.aQute.bndlib/src
 	
 	# make sure directory is clean
 	$(RM) -rf ./output

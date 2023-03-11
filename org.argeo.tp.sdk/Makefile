@@ -5,7 +5,7 @@ JVM ?= $(JAVA_HOME)/bin/java
 
 ARGEO_MAKE := $(JVM) -cp  ../ecj:../bndlib ../sdk/argeo-build/src/org/argeo/build/Make.java
 
-A2_CATEGORY = org.argeo.tp.build
+A2_CATEGORY = org.argeo.tp.sdk
 
 all: osgi
 
