@@ -11,12 +11,11 @@ SLF4J_VERSION=1.7.36
 JAVA_SOURCE=17
 JAVA_TARGET=17
 
-A2_CATEGORY_SDK = org.argeo.tp.sdk
+A2_CATEGORY_SDK = org.argeo.tp.build
 A2_CATEGORY_LOG = org.argeo.tp.log
 
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
-#SDK_BUILD_BASE ?= ./output
 
 ECJ_BASE=$(BOOTSTRAP_BASE)/ecj
 ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/org.eclipse.jdt.core.compiler.batch/src
@@ -50,14 +49,11 @@ ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BASE):$(SLF4J_BASE):$(OSGI_ANNOTATION_BASE) \
 
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BASE):$(SLF4J_BASE):$(OSGI_ANNOTATION_BASE):$(BNDLIB_BASE) $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
-
 all: osgi
 
 build-ecj:
 	mkdir -p $(BOOTSTRAP_BASE)
-	# list sources
 	find $(ECJ_SRC) | grep "\.java" > $(BOOTSTRAP_BASE)/ecj.todo
-	# build
 	$(JAVA_HOME)/bin/javac -d $(ECJ_BASE) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-slf4j: build-ecj
@@ -105,9 +101,6 @@ clean-sources:
 deb-source: distclean clean-sources bootstrap-prepare-sources
 	debuild --no-sign -S
 	$(RM) -f debian/files
-	$(RM) -rf $(ECJ_BASE)
-	$(RM) -rf $(BNDLIB_BASE)
-	$(RM) -rf org.argeo.tp.sdk/biz.aQute.bndlib/src
 
 bootstrap-prepare-sources: bootstrap-download-sources
 	## ECJ
@@ -126,9 +119,6 @@ bootstrap-prepare-sources: bootstrap-download-sources
 	# copy sources and resources
 	mkdir -p $(ECJ_SRC)
 	cp -r $(ECJ_BASE)/org $(ECJ_SRC)
-	# remove java sources
-	#cd $(ECJ_BASE) && find org -name "*.java" -type f -exec rm -f {} \;
-	#cd $(ECJ_BASE) && find org -name "*.html" -type f -exec rm -f {} \;
 	
 	## BNDLIB
 	# copy sources
@@ -165,23 +155,11 @@ bootstrap-prepare-sources: bootstrap-download-sources
 	# SLF4J
 	mkdir -p $(SLF4J_BASE)
 	mkdir -p $(SLF4J_SRC)
-	# sources for intermediate build
-	#cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar
-	# sources for final build
 	cd $(SLF4J_SRC) && jar -xf $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar
 	cd $(SLF4J_SRC) && jar -xf $(ORIGIN_BASE)/org.slf4j/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
 	$(RM) -rf $(SLF4J_SRC)/META-INF
 	$(RM) -rf $(SLF4J_SRC)/org/slf4j/impl
 	cp -r $(SLF4J_SRC)/org $(SYSLOGGER_SRC)
-	
-	#cp -rv ../rebuild/org.argeo.tp/org.argeo.ext.slf4j/src/* $(BNDLIB_SRC)
-
-
-	#mkdir -p org.argeo.tp.sdk/biz.aQute.bndlib/src
-	#cp -r ../rebuild/org.argeo.tp/org.argeo.ext.slf4j/src/* org.argeo.tp.sdk/biz.aQute.bndlib/src
-	
-	# make sure directory is clean
-	#$(RM) -rf ./output
 
 bootstrap-download-sources: $(SOURCE_ARCHIVES)
 
