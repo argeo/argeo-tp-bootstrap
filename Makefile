@@ -36,6 +36,7 @@ $(ORIGIN_BASE)/org.osgi/osgi.core-$(OSGI_CORE_VERSION)-sources.jar \
 $(ORIGIN_BASE)/org.osgi/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar \
 $(ORIGIN_BASE)/org.osgi/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar \
 $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar \
+$(ORIGIN_BASE)/org.slf4j/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # Actions
@@ -95,6 +96,7 @@ clean-sources:
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/event
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/helpers
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/spi
+	$(RM) -rf $(SYSLOGGER_SRC)/org/apache
 	
 deb-source: distclean clean-sources bootstrap-prepare-sources
 	debuild --no-sign -S
@@ -163,6 +165,7 @@ bootstrap-prepare-sources: bootstrap-download-sources
 	#cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar
 	# sources for final build
 	cd $(SLF4J_SRC) && jar -xf $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_SRC) && jar -xf $(ORIGIN_BASE)/org.slf4j/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
 	$(RM) -rf $(SLF4J_SRC)/META-INF
 	$(RM) -rf $(SLF4J_SRC)/org/slf4j/impl
 	cp -r $(SLF4J_SRC)/org $(SYSLOGGER_SRC)
@@ -201,6 +204,10 @@ $(ORIGIN_BASE)/org.osgi/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar:
 $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar:
 	mkdir -p $(ORIGIN_BASE)/org.slf4j
 	wget -c -O $(ORIGIN_BASE)/org.slf4j/slf4j-api-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/slf4j-api/$(SLF4J_VERSION)/slf4j-api-$(SLF4J_VERSION)-sources.jar
+
+$(ORIGIN_BASE)/org.slf4j/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar:
+	mkdir -p $(ORIGIN_BASE)/org.slf4j
+	wget -c -O $(ORIGIN_BASE)/org.slf4j/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/$(SLF4J_VERSION)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
 
 
 	
