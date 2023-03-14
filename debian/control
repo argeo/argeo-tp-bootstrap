@@ -6,14 +6,26 @@ Build-Depends: debhelper-compat (= 13), openjdk-17-jdk
 Standards-Version: 4.5.1
 Rules-Requires-Root: no
 
-Package: argeo-tp-build
+Package: argeo-tp-log
 Architecture: all
 Depends: ${misc:Depends}
+Description: Argeo third party logging APIs
+ SLF4J and Commons Logging APIs redirecting to Java System.Logger
+
+Package: argeo-tp-log-source
+Architecture: all
+Depends: ${misc:Depends}
+Description: Argeo third party logging APIs (source files)
+ Source code packaged as jar files usable in an Eclipse target platform.
+
+Package: argeo-tp-build
+Architecture: all
+Depends: ${misc:Depends}, argeo-tp-log
 Description: Argeo Build third party libraries
  Eclipse ECJ compiler and BND library.
 
 Package: argeo-tp-build-source
 Architecture: all
 Depends: ${misc:Depends}
-Description: Argeo Build third party libraries source files
- Eclipse ECJ compiler and BND library.
+Description: Argeo Build third party libraries (source files)
+ Source code packaged as jar files usable in an Eclipse target platform.
