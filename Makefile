@@ -75,7 +75,6 @@ clean:
 	$(RM) -rf $(BOOTSTRAP_BASE)
 	find $(ECJ_BASE) -name "*.class" -type f -exec rm -f {} \;
 	find $(BNDLIB_BASE) -name "*.class" -type f -exec rm -f {} \;
-	make -C org.argeo.tp.sdk clean
 
 distclean:
 	$(RM) -f sdk.mk
@@ -102,7 +101,7 @@ deb-source: distclean clean-sources bootstrap-prepare-sources
 	debuild --no-sign -S
 	$(RM) -f debian/files
 
-bootstrap-prepare-sources: bootstrap-download-sources
+bootstrap-prepare-sources: clean-sources bootstrap-download-sources
 	## ECJ
 	mkdir -p $(ECJ_BASE)
 	cd $(ECJ_BASE) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar
