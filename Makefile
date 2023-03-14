@@ -11,8 +11,8 @@ SLF4J_VERSION=1.7.36
 JAVA_SOURCE=17
 JAVA_TARGET=17
 
-A2_CATEGORY_SDK = org.argeo.tp.build
-A2_CATEGORY_LOG = org.argeo.tp.log
+A2_CATEGORY_SDK = org.argeo.tp.sdk
+A2_CATEGORY_LOG = org.argeo.tp
 
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
