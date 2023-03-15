@@ -82,7 +82,10 @@ License: LGPL-3.0-or-later
  This version of the GNU Lesser General Public License incorporates
  the terms and conditions of version 3 of the GNU General Public License,
  supplemented by the additional permissions listed in the COPYING.LESSER file. 
-
+Comment:
+ On Debian systems, the full text of the Lesser GNU General Public License
+ version 3 can be found in the file '/usr/share/common-licenses/LGPL-3'.
+ 
 License: EPL-2.0
  THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
  ECLIPSE PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION
@@ -99,6 +102,9 @@ License: Apache-2.0
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+Comment:
+ On Debian systems, the full text of the Apache License, version 2.0
+ can be found in the file '/usr/share/common-licenses/Apache-2.0'.
 
 License: MIT
  Permission is hereby granted, free  of charge, to any person obtaining
@@ -130,3 +136,6 @@ License: CC0-1.0
  for any number of copies, and (iv) for any purpose whatsoever,
  including without limitation commercial, advertising or promotional purposes.
  See https://creativecommons.org/publicdomain/zero/1.0/legalcode 
+Comment:
+ On Debian systems, the full text of the CC0 license, version 1.0
+ can be found in the file '/usr/share/common-licenses/CC0-1.0'.
