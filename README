@@ -1,0 +1,19 @@
+Argeo TP Bootstrap is a build harness used to produce the third party libraries
+required by Argeo Build.
+
+In order to work around the chicken-and-eggs issues, the process is split
+in the following phases:
+- prepare the sources, removing the parts we won't be able to compile
+- produce and intermediate build of the components
+- produce a regular Argeo build of the components, using the intermediate build
+output
+
+## Plain build
+$ ./configure
+$ make prepare-sources
+$ make
+
+## Debian packaging
+$ make prepare-sources
+$ debuild -S
+$ sudo pbuilder build ../argeo-tp-bootstrap_*.dsc
