@@ -1,10 +1,30 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://git.argeo.org/lgpl/argeo-tp-bootstrap.git
+License: LGPL-3.0-or-later
+Copyright: 2023 Argeo GmbH
+ 2008, 2019 IBM Corporation and others.
+ 2003-2023 The Apache Software Foundation
+ 2004-2023 QOS.ch
+ https://github.com/osgi/osgi authors
+ https://github.com/bndtools/bnd authors 
 
 Files: *
 Copyright: 2023 Argeo GmbH
 License: LGPL-3.0-or-later
 
+Files: sdk/argeo-build/*
+Copyright: 2023 Argeo GmbH
+License: CC0-1.0
+
+Files: /usr/share/argeo-build/*
+Copyright: 2023 Argeo GmbH
+License: CC0-1.0
+
 Files: org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch/*
+Copyright: 2008, 2019 IBM Corporation and others.
+License: EPL-2.0
+
+Files: /usr/share/a2/org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch*
 Copyright: 2008, 2019 IBM Corporation and others.
 License: EPL-2.0
 
@@ -12,7 +32,18 @@ Files: org.argeo.tp.sdk/biz.aQute.bndlib/*
 Copyright: authors at https://github.com/bndtools/bnd
 License: EPL-2.0 or Apache-2.0
 
+Files: /usr/share/a2/org.argeo.tp.sdk/biz.aQute.bndlib*
+Copyright: https://github.com/bndtools/bnd authors
+License: EPL-2.0 or Apache-2.0
+
 Files: org.argeo.tp.sdk/osgi.annotation/*
+Copyright: All content is the property of the respective authors or their employers.
+ For more information regarding authorship of content, please consult the
+ listed source code repository logs.
+ https://github.com/osgi/osgi/blob/main/NOTICE
+License: Apache-2.0
+
+Files: /usr/share/a2/org.argeo.tp.sdk/osgi.annotation*
 Copyright: All content is the property of the respective authors or their employers.
  For more information regarding authorship of content, please consult the
  listed source code repository logs.
@@ -26,6 +57,16 @@ License: Apache-2.0
 Files: org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/*
 Copyright: 2004-2023 QOS.ch
 License: MIT
+
+Files: org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/impl/*
+Copyright: 2023 Argeo GmbH
+License: MIT
+
+Files: /usr/share/a2/org.argeo.tp/org.argeo.tp.syslogger*
+Copyright: 2003-2023 The Apache Software Foundation
+ 2004-2023 QOS.ch
+ 2023 Argeo GmbH
+License: Apache-2.0
 
 License: LGPL-3.0-or-later
  This program is free software: you can redistribute it and/or modify it
@@ -76,3 +117,16 @@ License: MIT
  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+License: CC0-1.0
+ To the greatest extent permitted by, but not in contravention of,
+ applicable law, Affirmer hereby overtly, fully, permanently, irrevocably
+ and unconditionally waives, abandons, and surrenders all of Affirmer's
+ Copyright and Related Rights and associated claims and causes of action,
+ whether now known or unknown (including existing as well as future claims
+ and causes of action), in the Work (i) in all territories worldwide, (ii)
+ for the maximum duration provided by applicable law or treaty
+ (including future time extensions), (iii) in any current or future medium and
+ for any number of copies, and (iv) for any purpose whatsoever,
+ including without limitation commercial, advertising or promotional purposes.
+ See https://creativecommons.org/publicdomain/zero/1.0/legalcode 
