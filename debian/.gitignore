@@ -1,1 +1,5 @@
-/files
+files
+.debhelper
+debhelper*
+argeo-*/
+*.substvars
