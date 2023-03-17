@@ -16,10 +16,6 @@ Files: sdk/argeo-build/*
 Copyright: 2023 Argeo GmbH
 License: CC0-1.0
 
-Files: /usr/share/argeo-build/*
-Copyright: 2023 Argeo GmbH
-License: CC0-1.0
-
 Files: org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch/*
 Copyright: 2008, 2019 IBM Corporation and others.
 License: EPL-2.0

@@ -29,12 +29,3 @@ Architecture: all
 Depends: ${misc:Depends}
 Description: Argeo Build third party libraries (source files)
  Source code packaged as jar files usable in an Eclipse target platform.
-
-Package: argeo-build-scripts
-Architecture: all
-Depends: ${misc:Depends}, argeo-tp-build
-Description: Argeo Build scripts and files to include
- The version of Argeo Build which was used to bootstrap the platform.
- While Argeo Build is rather supposed to be included in the sources of
- a given layer as a git submodule, this package allows predictable and
- reproducible builds if needed.
