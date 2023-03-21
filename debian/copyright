@@ -26,11 +26,11 @@ License: EPL-2.0
 
 Files: org.argeo.tp.sdk/biz.aQute.bndlib/*
 Copyright: authors at https://github.com/bndtools/bnd
-License: EPL-2.0 or Apache-2.0
+License: Apache-2.0
 
 Files: /usr/share/a2/org.argeo.tp.sdk/biz.aQute.bndlib*
 Copyright: https://github.com/bndtools/bnd authors
-License: EPL-2.0 or Apache-2.0
+License: Apache-2.0
 
 Files: org.argeo.tp.sdk/osgi.annotation/*
 Copyright: All content is the property of the respective authors or their employers.

@@ -4,3 +4,11 @@ org.slf4j.*;version="1.7.36",\
 org.slf4j.impl;version="0.0.0"
 
 Import-Package: !*
+
+Bundle-Copyright: \
+Copyright (c) 2004-2023 QOS.ch, \
+Copyright 2003-2023 The Apache Software Foundation, \
+Copyright 2023 Mathieu Baudier, \
+Copyright 2023 Argeo GmbH, \
+
+SPDX-License-Identifier: Apache-2.0 AND MIT

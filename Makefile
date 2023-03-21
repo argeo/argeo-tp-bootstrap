@@ -1,5 +1,7 @@
 -include sdk.mk
 
+export NO_SDK_LEGAL := true
+
 ECJ_VERSION=4.26
 
 BND_VERSION=5.3.0
