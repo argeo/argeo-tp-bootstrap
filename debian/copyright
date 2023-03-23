@@ -16,49 +16,49 @@ Files: sdk/argeo-build/*
 Copyright: 2023 Argeo GmbH
 License: CC0-1.0
 
-Files: org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch/*
+Files: org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch/*
 Copyright: 2008, 2019 IBM Corporation and others.
 License: EPL-2.0
 
-Files: /usr/share/a2/org.argeo.tp.sdk/org.eclipse.jdt.core.compiler.batch*
+Files: /usr/share/a2/org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch*
 Copyright: 2008, 2019 IBM Corporation and others.
 License: EPL-2.0
 
-Files: org.argeo.tp.sdk/biz.aQute.bndlib/*
+Files: org.argeo.tp.build/biz.aQute.bndlib/*
 Copyright: authors at https://github.com/bndtools/bnd
 License: Apache-2.0
 
-Files: /usr/share/a2/org.argeo.tp.sdk/biz.aQute.bndlib*
+Files: /usr/share/a2/org.argeo.tp.build/biz.aQute.bndlib*
 Copyright: https://github.com/bndtools/bnd authors
 License: Apache-2.0
 
-Files: org.argeo.tp.sdk/osgi.annotation/*
+Files: org.argeo.tp.build/osgi.annotation/*
 Copyright: All content is the property of the respective authors or their employers.
  For more information regarding authorship of content, please consult the
  listed source code repository logs.
  https://github.com/osgi/osgi/blob/main/NOTICE
 License: Apache-2.0
 
-Files: /usr/share/a2/org.argeo.tp.sdk/osgi.annotation*
+Files: /usr/share/a2/org.argeo.tp.build/osgi.annotation*
 Copyright: All content is the property of the respective authors or their employers.
  For more information regarding authorship of content, please consult the
  listed source code repository logs.
  https://github.com/osgi/osgi/blob/main/NOTICE
 License: Apache-2.0
 
-Files: org.argeo.tp/org.argeo.tp.syslogger/src/org/apache/*
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/apache/*
 Copyright: 2003-2023 The Apache Software Foundation
 License: Apache-2.0
 
-Files: org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/*
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/*
 Copyright: 2004-2023 QOS.ch
 License: MIT
 
-Files: org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/impl/*
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/impl/*
 Copyright: 2023 Argeo GmbH
 License: MIT
 
-Files: /usr/share/a2/org.argeo.tp/org.argeo.tp.syslogger*
+Files: /usr/share/a2/log/syslogger/org.argeo.tp/org.argeo.tp.syslogger*
 Copyright: 2003-2023 The Apache Software Foundation
  2004-2023 QOS.ch
  2023 Argeo GmbH

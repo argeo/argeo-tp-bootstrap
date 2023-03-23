@@ -13,8 +13,8 @@ SLF4J_VERSION=1.7.36
 JAVA_SOURCE=17
 JAVA_TARGET=17
 
-A2_CATEGORY_SDK = org.argeo.tp.sdk
-A2_CATEGORY_LOG = org.argeo.tp
+A2_CATEGORY_BUILD = org.argeo.tp.build
+A2_CATEGORY_LOG = log/syslogger/org.argeo.tp
 
 # required when preparing sources for debuild,
 # since no sdk.mk should be present otherwise it would be packed as well
@@ -27,7 +27,7 @@ BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
 
 # ECJ sources, used for both intermediate and final build
-ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/org.eclipse.jdt.core.compiler.batch/src
+ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
 # compiled ECJ, used for intermediate build
 ECJ_BIN=$(BOOTSTRAP_BASE)/ecj
 
@@ -37,12 +37,12 @@ SYSLOGGER_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_LOG)/org.argeo.tp.syslogger/src
 SYSLOGGER_BIN=$(BOOTSTRAP_BASE)/slf4j
 
 # BNDLIB sources, used for both intermediate and final build
-BNDLIB_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/biz.aQute.bndlib/src
+BNDLIB_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/biz.aQute.bndlib/src
 # compiled BNDLIB, used for intermediate build
 BNDLIB_BIN=$(BOOTSTRAP_BASE)/bndlib
 
 # OSGi annotation sources, used for both intermediate and final build
-OSGI_ANNOTATION_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_SDK)/osgi.annotation/src
+OSGI_ANNOTATION_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/osgi.annotation/src
 # compiled OSGi annotation, used for intermediate build
 OSGI_ANNOTATION_BIN=$(BOOTSTRAP_BASE)/osgi-annotation
 
@@ -89,7 +89,7 @@ distclean:
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	cd $(A2_CATEGORY_LOG) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_LOG) \
 	--bundles org.argeo.tp.syslogger
-	cd $(A2_CATEGORY_SDK) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_SDK) \
+	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
 
 ## INTERMEDIATE BUILDS
