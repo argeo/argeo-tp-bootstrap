@@ -2,8 +2,8 @@
 
 export NO_SDK_LEGAL := true
 
-ECLIPSE_RELEASE=4.27
-ECLIPSE_DROP=R-4.27-202303020300
+ECLIPSE_RELEASE=4.26
+ECLIPSE_DROP=R-4.26-202211231800
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
@@ -92,6 +92,10 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	--bundles org.argeo.tp.syslogger
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
+	# copy ECJ MANIFEST
+	# TODO Make it more generic?
+	cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF \
+	 $(ECJ_SRC)/../META-INF/MANIFEST.MF
 
 ## INTERMEDIATE BUILDS
 build-ecj:
@@ -169,6 +173,7 @@ prepare-sources: clean-sources download-sources
 
 clean-sources:
 	$(RM) -rf $(ECJ_SRC)/*
+	$(RM) -rf $(ECJ_SRC)/../META-INF/MANIFEST.MF
 	$(RM) -rf $(BNDLIB_SRC)/*
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/*
 	$(RM) -rf $(OSGI_BASE)
