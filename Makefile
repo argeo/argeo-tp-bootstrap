@@ -29,6 +29,7 @@ ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
 
 # ECJ sources, used for both intermediate and final build
 ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
+ECJ_SRC_META_INF=$(abspath $(ECJ_SRC)/../META-INF)
 # compiled ECJ, used for intermediate build
 ECJ_BIN=$(BOOTSTRAP_BASE)/ecj
 
@@ -93,9 +94,8 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
 	# copy ECJ MANIFEST
-	# TODO Make it more generic?
-	cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF \
-	 $(ECJ_SRC)/../META-INF/MANIFEST.MF
+	mkdir -p $(ECJ_SRC_META_INF)
+	cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF $(ECJ_SRC_META_INF)
 
 ## INTERMEDIATE BUILDS
 build-ecj:
@@ -173,7 +173,7 @@ prepare-sources: clean-sources download-sources
 
 clean-sources:
 	$(RM) -rf $(ECJ_SRC)/*
-	$(RM) -rf $(ECJ_SRC)/../META-INF/MANIFEST.MF
+	$(RM) -rf $(ECJ_SRC_META_INF)
 	$(RM) -rf $(BNDLIB_SRC)/*
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/*
 	$(RM) -rf $(OSGI_BASE)
