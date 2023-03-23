@@ -155,6 +155,7 @@ prepare-sources: clean-sources download-sources
 	cp -r $(OSGI_BASE)/org/osgi/service/log $(BNDLIB_SRC)/org/osgi/service
 
 	## OSGI ANNOTATION
+	mkdir -p $(OSGI_ANNOTATION_SRC)
 	cd $(OSGI_ANNOTATION_SRC) && jar -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/META-INF
 
