@@ -2,7 +2,8 @@
 
 export NO_SDK_LEGAL := true
 
-ECJ_VERSION=4.27
+ECLIPSE_RELEASE=4.27
+ECLIPSE_DROP=R-4.27-202303020300
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
@@ -53,7 +54,7 @@ OSGI_BASE=$(BOOTSTRAP_BASE)/osgi-src
 
 
 SOURCE_ARCHIVES=\
-$(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar \
+$(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar \
 $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar \
 $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar \
 $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar \
@@ -114,7 +115,7 @@ build-bndlib: build-ecj build-syslogger build-osgi-annotation
 prepare-sources: clean-sources download-sources
 	## ECJ
 	mkdir -p $(ECJ_SRC)
-	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar
+	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
 # clean up
@@ -186,9 +187,9 @@ deb-source: distclean clean-sources bootstrap-prepare-sources
 ## SOURCES ORIGIN
 download-sources: $(SOURCE_ARCHIVES)
 
-$(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar:
+$(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar:
 	mkdir -p $(ORIGIN_BASE)
-	wget -c -O $(ORIGIN_BASE)/ecjsrc-$(ECJ_VERSION).jar https://ftp-stud.hs-esslingen.de/Mirrors/eclipse/eclipse/downloads/drops4/R-4.26-202211231800/ecjsrc-$(ECJ_VERSION).jar
+	wget -c -O $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar https://ftp-stud.hs-esslingen.de/Mirrors/eclipse/eclipse/downloads/drops4/$(ECLIPSE_DROP)/ecjsrc-$(ECLIPSE_RELEASE).jar
 	
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz:
 	mkdir -p $(ORIGIN_BASE)
