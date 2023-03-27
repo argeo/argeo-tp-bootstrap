@@ -21,6 +21,8 @@ A2_CATEGORY_LOG = log/syslogger/org.argeo.tp
 # since no sdk.mk should be present otherwise it would be packed as well
 SDK_SRC_BASE ?=$(shell pwd)
 SDK_BUILD_BASE ?=$(shell pwd)/output
+-include $(SDK_SRC_BASE)/branch.mk
+-include $(SDK_SRC_BASE)/sdk/branches/$(BRANCH).bnd
 
 # base for all intermediate actions
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
@@ -72,6 +74,16 @@ ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) \
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
+# GNU
+DIST=
+prefix=$(DIST)/usr/local
+datarootdir=$(prefix)/share
+datadir=$(datarootdir)
+
+# dist
+DIST_NAME=argeo-tp-bootstrap
+RPMBUILD_BASE=$(HOME)/rpmbuild
+
 ## GENERIC TARGETS
 all: osgi
 
@@ -87,15 +99,20 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
+install:
+	mkdir -p $(datadir)/a2
+	cp -Rv $(SDK_BUILD_BASE)/a2/* $(datadir)/a2
+	cp -Rv $(SDK_BUILD_BASE)/a2.src/* $(datadir)/a2
+
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	cd $(A2_CATEGORY_LOG) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_LOG) \
 	--bundles org.argeo.tp.syslogger
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
-	# copy ECJ MANIFEST
-	mkdir -p $(ECJ_SRC_META_INF)
-	cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF $(ECJ_SRC_META_INF)
+# copy ECJ MANIFEST in order to debug
+#mkdir -p $(ECJ_SRC_META_INF)
+#cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF $(ECJ_SRC_META_INF)
 
 ## INTERMEDIATE BUILDS
 build-ecj:
@@ -185,8 +202,17 @@ clean-sources:
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/spi
 	$(RM) -rf $(SYSLOGGER_SRC)/org/apache
 
-## DEBIAN
-deb-source: distclean clean-sources bootstrap-prepare-sources
+## DIST
+rpm-sources: prepare-sources
+	mkdir -p $(RPMBUILD_BASE)/{SOURCES,SPECS}
+	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
+	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' \
+	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro).tar.xz .
+	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	rpmbuild -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+
+deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
 	$(RM) -f debian/files
 
