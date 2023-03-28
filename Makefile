@@ -226,6 +226,8 @@ rpm-sources: prepare-sources
 	rpmbuild -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 rpm-build:
+	mkdir -p $(RPMBUILD_BASE)/SOURCES
+	mkdir -p $(RPMBUILD_BASE)/SPECS
 	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
