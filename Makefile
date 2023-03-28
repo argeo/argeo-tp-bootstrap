@@ -82,7 +82,8 @@ datadir=$(datarootdir)
 
 # dist
 DIST_NAME=argeo-tp-bootstrap
-RPMBUILD_BASE=$(HOME)/rpmbuild
+RPMBUILD_BASE?=$(HOME)/rpmbuild
+RPM_DIST=
 
 ## GENERIC TARGETS
 all: osgi
@@ -204,13 +205,20 @@ clean-sources:
 
 ## DIST
 rpm-sources: prepare-sources
-	mkdir -p $(RPMBUILD_BASE)/{SOURCES,SPECS}
+	mkdir -p $(RPMBUILD_BASE)/SOURCES
+	mkdir -p $(RPMBUILD_BASE)/SPECS
+#	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' 
 	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
-	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' \
 	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro).tar.xz .
 	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+
+rpm-build:
+	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	rpmbuild --nodeps --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
+	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
