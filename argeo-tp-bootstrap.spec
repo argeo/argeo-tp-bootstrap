@@ -39,7 +39,7 @@ Summary:        Argeo Build third party libraries (sources)
 Source code packaged as jar files usable in an Eclipse target platform.
 
 %prep
-%setup -q
+%setup -c -n %{name} -q
 
 %build
 %configure
