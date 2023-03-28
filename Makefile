@@ -106,6 +106,7 @@ a2-install:
 	mkdir -p $(datadir)/a2
 	cp -Rv $(SDK_BUILD_BASE)/a2/* $(datadir)/a2
 	cp -Rv $(SDK_BUILD_BASE)/a2.src/* $(datadir)/a2
+	cd $(datadir)/a2/log && ln -f -s syslogger default 
 
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
