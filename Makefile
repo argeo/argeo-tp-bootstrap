@@ -228,7 +228,7 @@ rpm-sources: prepare-sources
 rpm-build:
 	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
-	rpmbuild --clean --rmsource --rmspec --nodeps \
+	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
 	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
