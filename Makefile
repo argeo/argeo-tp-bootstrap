@@ -190,6 +190,13 @@ prepare-sources: clean-sources download-sources
 	$(RM) -rf $(SLF4J_BASE)/META-INF
 	$(RM) -rf $(SLF4J_BASE)/org/slf4j/impl
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
+	
+	# Debian changelog
+	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
+	echo >> $(DEB_CHANGELOG)
+	echo "  * Based on Eclipse release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
+	echo >> $(DEB_CHANGELOG)
+	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)	
 
 clean-sources:
 	$(RM) -rf $(ECJ_SRC)/*
@@ -204,6 +211,7 @@ clean-sources:
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/helpers
 	$(RM) -rf $(SYSLOGGER_SRC)/org/slf4j/spi
 	$(RM) -rf $(SYSLOGGER_SRC)/org/apache
+	$(RM) -rf $(DEB_CHANGELOG)
 
 ## DIST
 rpm-sources: prepare-sources
@@ -224,11 +232,6 @@ rpm-build:
 	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 deb-source: distclean clean-sources prepare-sources
-	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
-	echo >> $(DEB_CHANGELOG)
-	echo "  * Based on Eclipse release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
-	echo >> $(DEB_CHANGELOG)
-	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)
 	debuild --no-sign -S
 	$(RM) -f debian/files
 
