@@ -49,7 +49,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make datadir=%{buildroot}%{_datadir} install
+make datadir=%{buildroot}%{_datadir} a2-install
 
 %files -n argeo-tp-log
 %{_datadir}/a2/log/syslogger/org.argeo.tp/*.jar

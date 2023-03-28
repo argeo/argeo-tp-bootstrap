@@ -75,8 +75,8 @@ ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BN
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
 # GNU
-DIST=
-prefix=$(DIST)/usr/local
+DESTDIR=
+prefix=$(DESTDIR)/usr/local
 datarootdir=$(prefix)/share
 datadir=$(datarootdir)
 
@@ -99,7 +99,7 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
-install:
+a2-install:
 	mkdir -p $(datadir)/a2
 	cp -Rv $(SDK_BUILD_BASE)/a2/* $(datadir)/a2
 	cp -Rv $(SDK_BUILD_BASE)/a2.src/* $(datadir)/a2
