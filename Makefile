@@ -81,7 +81,9 @@ datarootdir=$(prefix)/share
 datadir=$(datarootdir)
 
 # dist
+PACKAGER?=Unknown <unkown@localhost>
 DIST_NAME=argeo-tp-bootstrap
+DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
 RPM_DIST=
 
@@ -221,6 +223,11 @@ rpm-build:
 	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 deb-source: distclean clean-sources prepare-sources
+	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
+	echo >> $(DEB_CHANGELOG)
+	echo "  * Based on Eclipse release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
+	echo >> $(DEB_CHANGELOG)
+	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)
 	debuild --no-sign -S
 	$(RM) -f debian/files
 
