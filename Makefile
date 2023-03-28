@@ -219,7 +219,8 @@ rpm-sources: prepare-sources
 rpm-build:
 	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
-	rpmbuild --nodeps --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
+	rpmbuild --clean --rmsource --rmspec --nodeps \
+	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
 	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 deb-source: distclean clean-sources prepare-sources
