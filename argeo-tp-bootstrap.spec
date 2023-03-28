@@ -52,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 make datadir=%{buildroot}%{_datadir} a2-install
 
 %files -n argeo-tp-log
+%{_datadir}/a2/log/default
 %{_datadir}/a2/log/syslogger/org.argeo.tp/*.jar
 %exclude %{_datadir}/a2/log/syslogger/org.argeo.tp/*.src.jar
 
