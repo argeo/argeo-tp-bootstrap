@@ -232,7 +232,7 @@ rpm-build:
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
-	 -bb $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	 -ba $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
 deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
