@@ -27,7 +27,7 @@ SDK_BUILD_BASE ?=$(shell pwd)/output
 # base for all intermediate actions
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 # downloaded artifacts
-ORIGIN_BASE=$(BOOTSTRAP_BASE)/origin
+ORIGIN_BASE=$(HOME)/.cache/argeo/build/origin/bootstrap
 
 # ECJ sources, used for both intermediate and final build
 ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
