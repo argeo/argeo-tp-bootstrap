@@ -1,0 +1,14 @@
+This component is a rebuild of the ECJ compiler based on the sources provided
+by the Eclipse foundation along with the related Eclipse simultaneous release.
+
+There are multiple copyright owners. Please refer to the individual sources files 
+for more details.
+
+The applicable license for both binaries and source code is the Eclipse Public
+License version 2.0, which is available here:
+https://www.eclipse.org/legal/epl-2.0/
+
+The following modifications have been applied to the original source code:
+
+- org/eclipse/jdt/core/JDTCompilerAdapter.java has been removed, in order to 
+avoid a dependency with Ant

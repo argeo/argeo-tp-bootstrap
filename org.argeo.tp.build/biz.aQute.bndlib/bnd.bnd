@@ -1,0 +1,8 @@
+major: 5
+minor: 3
+micro: 0
+qualifier:
+
+SPDX-License-Identifier: Apache-2.0
+
+Export-Package: aQute.*

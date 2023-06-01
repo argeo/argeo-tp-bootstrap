@@ -1,0 +1,137 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Source: https://git.argeo.org/lgpl/argeo-tp-bootstrap.git
+License: LGPL-3.0-or-later
+Copyright: 2023 Argeo GmbH
+ 2008, 2019 IBM Corporation and others.
+ 2003-2023 The Apache Software Foundation
+ 2004-2023 QOS.ch
+ https://github.com/osgi/osgi authors
+ https://github.com/bndtools/bnd authors 
+
+Files: *
+Copyright: 2023 Argeo GmbH
+License: LGPL-3.0-or-later
+
+Files: sdk/argeo-build/*
+Copyright: 2023 Argeo GmbH
+License: CC0-1.0
+
+Files: org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch/*
+Copyright: 2008, 2019 IBM Corporation and others.
+License: EPL-2.0
+
+Files: /usr/share/a2/org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch*
+Copyright: 2008, 2019 IBM Corporation and others.
+License: EPL-2.0
+
+Files: org.argeo.tp.build/biz.aQute.bndlib/*
+Copyright: authors at https://github.com/bndtools/bnd
+License: Apache-2.0
+
+Files: /usr/share/a2/org.argeo.tp.build/biz.aQute.bndlib*
+Copyright: https://github.com/bndtools/bnd authors
+License: Apache-2.0
+
+Files: org.argeo.tp.build/osgi.annotation/*
+Copyright: All content is the property of the respective authors or their employers.
+ For more information regarding authorship of content, please consult the
+ listed source code repository logs.
+ https://github.com/osgi/osgi/blob/main/NOTICE
+License: Apache-2.0
+
+Files: /usr/share/a2/org.argeo.tp.build/osgi.annotation*
+Copyright: All content is the property of the respective authors or their employers.
+ For more information regarding authorship of content, please consult the
+ listed source code repository logs.
+ https://github.com/osgi/osgi/blob/main/NOTICE
+License: Apache-2.0
+
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/apache/*
+Copyright: 2003-2023 The Apache Software Foundation
+License: Apache-2.0
+
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/*
+Copyright: 2004-2023 QOS.ch
+License: MIT
+
+Files: log/syslogger/org.argeo.tp/org.argeo.tp.syslogger/src/org/slf4j/impl/*
+Copyright: 2023 Argeo GmbH
+License: MIT
+
+Files: /usr/share/a2/log/syslogger/org.argeo.tp/org.argeo.tp.syslogger*
+Copyright: 2003-2023 The Apache Software Foundation
+ 2004-2023 QOS.ch
+ 2023 Argeo GmbH
+License: Apache-2.0
+
+License: LGPL-3.0-or-later
+ This program is free software: you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License,
+ or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>.
+ This version of the GNU Lesser General Public License incorporates
+ the terms and conditions of version 3 of the GNU General Public License,
+ supplemented by the additional permissions listed in the COPYING.LESSER file. 
+Comment:
+ On Debian systems, the full text of the Lesser GNU General Public License
+ version 3 can be found in the file '/usr/share/common-licenses/LGPL-3'.
+ 
+License: EPL-2.0
+ THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS
+ ECLIPSE PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION
+ OF THE PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+ see https://www.eclipse.org/legal/epl-2.0/
+
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+Comment:
+ On Debian systems, the full text of the Apache License, version 2.0
+ can be found in the file '/usr/share/common-licenses/Apache-2.0'.
+
+License: MIT
+ Permission is hereby granted, free  of charge, to any person obtaining
+ a  copy  of this  software  and  associated  documentation files  (the
+ "Software"), to  deal in  the Software without  restriction, including
+ without limitation  the rights to  use, copy, modify,  merge, publish,
+ distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ permit persons to whom the Software  is furnished to do so, subject to
+ the following conditions:
+ The  above  copyright  notice  and  this permission  notice  shall  be
+ included in all copies or substantial portions of the Software.
+ THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+License: CC0-1.0
+ To the greatest extent permitted by, but not in contravention of,
+ applicable law, Affirmer hereby overtly, fully, permanently, irrevocably
+ and unconditionally waives, abandons, and surrenders all of Affirmer's
+ Copyright and Related Rights and associated claims and causes of action,
+ whether now known or unknown (including existing as well as future claims
+ and causes of action), in the Work (i) in all territories worldwide, (ii)
+ for the maximum duration provided by applicable law or treaty
+ (including future time extensions), (iii) in any current or future medium and
+ for any number of copies, and (iv) for any purpose whatsoever,
+ including without limitation commercial, advertising or promotional purposes.
+ See https://creativecommons.org/publicdomain/zero/1.0/legalcode 
+Comment:
+ On Debian systems, the full text of the CC0 license, version 1.0
+ can be found in the file '/usr/share/common-licenses/CC0-1.0'.

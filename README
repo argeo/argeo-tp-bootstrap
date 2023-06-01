@@ -1,0 +1,36 @@
+Argeo TP Bootstrap is a build harness used to produce the third party libraries
+required by Argeo Build.
+
+In order to work around the chicken-and-eggs issues, the process is split
+in the following phases:
+- prepare the sources, removing the parts we won't be able to compile
+- produce and intermediate build of the components
+- produce a regular Argeo build of the components, using the intermediate build
+output
+
+## Licenses
+Quite a few licenses from various copyright holders are mixed in the produced
+source and binary components.
+
+The build harness itself (that is, the code in the git repository) is licensed
+under the LGPL-3.0-or-later license.
+
+The other licenses used are:
+EPL-2.0
+Apache-2.0
+CC0-1.0
+MIT
+
+The file debian/copyright details all attributions precisely in the format
+described here:
+https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+## Plain build
+$ ./configure
+$ make prepare-sources
+$ make
+
+## Debian packaging
+$ make prepare-sources
+$ debuild -S
+$ sudo pbuilder build ../argeo-tp-bootstrap_*.dsc

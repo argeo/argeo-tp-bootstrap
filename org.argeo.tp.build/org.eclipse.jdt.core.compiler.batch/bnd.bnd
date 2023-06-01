@@ -1,0 +1,10 @@
+major: 3
+minor: 32
+micro: 0
+qualifier:
+
+SPDX-License-Identifier: EPL-2.0
+
+Main-Class: org.eclipse.jdt.internal.compiler.batch.Main
+Export-Package: org.eclipse.jdt.*, !*.internal.*
+

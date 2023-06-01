@@ -1,0 +1,6 @@
+files
+.debhelper
+debhelper*
+argeo-*/
+*.substvars
+/changelog
