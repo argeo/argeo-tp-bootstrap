@@ -2,8 +2,10 @@
 
 export NO_SDK_LEGAL := true
 
-ECLIPSE_RELEASE=4.28
-ECLIPSE_DROP=R-4.28-202306050440
+ECLIPSE_RELEASE=4.29
+ECLIPSE_DROP=R-4.29-202309031000
+# ECJ requires Java 20+
+ECJ_JAVA_HOME=/opt/jdk-21
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
@@ -74,6 +76,9 @@ ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) \
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
+ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
+ $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
+
 # GNU
 DESTDIR=
 prefix=$(DESTDIR)/usr/local
@@ -112,8 +117,10 @@ a2-install:
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	cd $(A2_CATEGORY_LOG) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_LOG) \
 	--bundles org.argeo.tp.syslogger
+	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE_ECJ) all --category $(A2_CATEGORY_BUILD) \
+	--bundles org.eclipse.jdt.core.compiler.batch
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
-	--bundles org.eclipse.jdt.core.compiler.batch osgi.annotation biz.aQute.bndlib
+	--bundles osgi.annotation biz.aQute.bndlib
 # copy ECJ MANIFEST in order to debug
 #mkdir -p $(ECJ_SRC_META_INF)
 #cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF $(ECJ_SRC_META_INF)
@@ -125,7 +132,7 @@ build-ecj:
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
 	find $(ECJ_SRC) | grep "\.java" > $(BOOTSTRAP_BASE)/ecj.todo
-	$(JAVA_HOME)/bin/javac -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+	$(ECJ_JAVA_HOME)/bin/javac -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
 	$(ECJ_INTERMEDIATE)	$(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
