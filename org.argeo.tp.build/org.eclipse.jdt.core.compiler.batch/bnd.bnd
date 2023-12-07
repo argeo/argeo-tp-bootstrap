@@ -1,6 +1,6 @@
 major: 3
 # Minor MUST always be with 3 digits so that argeo-build can use a sort and pick up the latest version
-minor: 035
+minor: 036
 micro: 0
 qualifier:
 

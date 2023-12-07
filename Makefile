@@ -2,15 +2,21 @@
 
 export NO_SDK_LEGAL := true
 
-ECLIPSE_RELEASE=4.29
-ECLIPSE_DROP=R-4.29-202309031000
+## FIXME
+## DON'T FORGET TO UPDATE
+## org.argeo.tp.build/*/bnd.bnd
+## WITH THE UPDATED ECJ AND OSGi VERSIONS!
+## 
+
+ECLIPSE_RELEASE=4.30
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202312010110
 # ECJ requires Java 20+
 ECJ_JAVA_HOME=/opt/jdk-21
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
 OSGI_CMPN_VERSION=7.0.0
-OSGI_ANNOTATION_VERSION=7.0.0
+OSGI_ANNOTATION_VERSION=8.1.0
 SLF4J_VERSION=1.7.36
 
 JAVA_SOURCE=17
@@ -86,7 +92,8 @@ datarootdir=$(prefix)/share
 datadir=$(datarootdir)
 
 # dist
-PACKAGER?=Unknown <unkown@localhost>
+# PACKAGER must be specified
+PACKAGER?=
 DIST_NAME=argeo-tp-bootstrap
 DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
@@ -202,7 +209,7 @@ prepare-sources: clean-sources download-sources
 	# Debian changelog
 	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
-	echo "  * Based on Eclipse release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
+	echo "  * Based on Eclipse ECJ release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
 	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)	
 
