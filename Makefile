@@ -86,10 +86,9 @@ ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OS
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
 # GNU
-DESTDIR=
-prefix=$(DESTDIR)/usr/local
-datarootdir=$(prefix)/share
-datadir=$(datarootdir)
+prefix ?= /usr/local
+datarootdir ?= $(prefix)/share
+A2_INSTALL_TARGET ?= $(DESTDIR)$(datarootdir)/a2
 
 # dist
 # PACKAGER must be specified
@@ -98,6 +97,8 @@ DIST_NAME=argeo-tp-bootstrap
 DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
 RPM_DIST=
+
+COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
 all: osgi
@@ -114,11 +115,17 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
-a2-install:
-	mkdir -p $(datadir)/a2
-	cp -Rv $(SDK_BUILD_BASE)/a2/* $(datadir)/a2
-	cp -Rv $(SDK_BUILD_BASE)/a2.src/* $(datadir)/a2
-	cd $(datadir)/a2/log && ln -f -s syslogger default 
+install:
+	mkdir -p $(A2_INSTALL_TARGET)
+	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/log $(A2_INSTALL_TARGET)
+	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/org.argeo.tp.build $(A2_INSTALL_TARGET)
+	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/log $(A2_INSTALL_TARGET); fi;
+	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/org.argeo.tp.build $(A2_INSTALL_TARGET); fi;
+	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
+
+uninstall:
+	$(RM) -r $(A2_INSTALL_TARGET)/log
+	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
 
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
