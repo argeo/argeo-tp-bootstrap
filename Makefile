@@ -85,7 +85,7 @@ ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BN
 ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
-# GNU
+# GNU coding standards
 prefix ?= /usr/local
 datarootdir ?= $(prefix)/share
 A2_INSTALL_TARGET ?= $(DESTDIR)$(datarootdir)/a2
