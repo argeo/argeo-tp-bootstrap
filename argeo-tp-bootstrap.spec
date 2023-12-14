@@ -49,19 +49,19 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make datadir=%{buildroot}%{_datadir} a2-install
+make datarootdir=%{buildroot}%{_datarootdir} local-install
 
 %files -n argeo-tp-log
-%{_datadir}/a2/log/default
-%{_datadir}/a2/log/syslogger/org.argeo.tp/*.jar
-%exclude %{_datadir}/a2/log/syslogger/org.argeo.tp/*.src.jar
+%{_datarootdir}/a2/log/default
+%{_datarootdir}/a2/log/syslogger/org.argeo.tp/*.jar
+%exclude %{_datarootdir}/a2/log/syslogger/org.argeo.tp/*.src.jar
 
 %files -n argeo-tp-log-source
-%{_datadir}/a2/log/syslogger/org.argeo.tp/*.src.jar
+%{_datarootdir}/a2/log/syslogger/org.argeo.tp/*.src.jar
 
 %files -n argeo-tp-build
-%{_datadir}/a2/org.argeo.tp.build/*.jar
-%exclude %{_datadir}/a2/org.argeo.tp.build/*.src.jar
+%{_datarootdir}/a2/org.argeo.tp.build/*.jar
+%exclude %{_datarootdir}/a2/org.argeo.tp.build/*.src.jar
 
 %files -n argeo-tp-build-source
-%{_datadir}/a2/org.argeo.tp.build/*.src.jar
+%{_datarootdir}/a2/org.argeo.tp.build/*.src.jar
