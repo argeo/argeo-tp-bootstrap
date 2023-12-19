@@ -2,15 +2,21 @@
 
 export NO_SDK_LEGAL := true
 
-ECLIPSE_RELEASE=4.29
-ECLIPSE_DROP=R-4.29-202309031000
+## FIXME
+## DON'T FORGET TO UPDATE
+## org.argeo.tp.build/*/bnd.bnd
+## WITH THE UPDATED ECJ AND OSGi VERSIONS!
+## 
+
+ECLIPSE_RELEASE=4.30
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202312010110
 # ECJ requires Java 20+
 ECJ_JAVA_HOME=/opt/jdk-21
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
 OSGI_CMPN_VERSION=7.0.0
-OSGI_ANNOTATION_VERSION=7.0.0
+OSGI_ANNOTATION_VERSION=8.1.0
 SLF4J_VERSION=1.7.36
 
 JAVA_SOURCE=17
@@ -79,18 +85,20 @@ ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BN
 ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
-# GNU
-DESTDIR=
-prefix=$(DESTDIR)/usr/local
-datarootdir=$(prefix)/share
-datadir=$(datarootdir)
+# GNU coding standards
+prefix ?= /usr/local
+datarootdir ?= $(prefix)/share
+A2_INSTALL_TARGET ?= $(DESTDIR)$(datarootdir)/a2
 
 # dist
-PACKAGER?=Unknown <unkown@localhost>
+# PACKAGER must be specified
+PACKAGER?=
 DIST_NAME=argeo-tp-bootstrap
 DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
 RPM_DIST=
+
+COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
 all: osgi
@@ -107,11 +115,17 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
-a2-install:
-	mkdir -p $(datadir)/a2
-	cp -Rv $(SDK_BUILD_BASE)/a2/* $(datadir)/a2
-	cp -Rv $(SDK_BUILD_BASE)/a2.src/* $(datadir)/a2
-	cd $(datadir)/a2/log && ln -f -s syslogger default 
+local-install:
+	mkdir -p $(A2_INSTALL_TARGET)
+	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/log $(A2_INSTALL_TARGET)
+	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/org.argeo.tp.build $(A2_INSTALL_TARGET)
+	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/log $(A2_INSTALL_TARGET); fi;
+	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/org.argeo.tp.build $(A2_INSTALL_TARGET); fi;
+	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
+
+local-uninstall:
+	$(RM) -r $(A2_INSTALL_TARGET)/log
+	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
 
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
@@ -202,7 +216,7 @@ prepare-sources: clean-sources download-sources
 	# Debian changelog
 	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
-	echo "  * Based on Eclipse release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
+	echo "  * Based on Eclipse ECJ release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
 	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)	
 
