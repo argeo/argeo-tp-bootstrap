@@ -124,8 +124,10 @@ local-install:
 	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
 
 local-uninstall:
-	$(RM) -r $(A2_INSTALL_TARGET)/log
+	$(RM) $(A2_INSTALL_TARGET)/log/default
+	$(RM) -r $(A2_INSTALL_TARGET)/log/syslogger
 	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
+	@if [ -d $(A2_INSTALL_TARGET) ]; then find $(A2_INSTALL_TARGET) -empty -type d -delete; fi
 
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
