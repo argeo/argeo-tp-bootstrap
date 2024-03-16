@@ -11,7 +11,7 @@ export NO_SDK_LEGAL := true
 ECLIPSE_RELEASE=4.30
 ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202312010110
 # ECJ requires Java 20+
-ECJ_JAVA_HOME=/opt/jdk-21
+ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
@@ -124,8 +124,10 @@ local-install:
 	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
 
 local-uninstall:
-	$(RM) -r $(A2_INSTALL_TARGET)/log
+	$(RM) $(A2_INSTALL_TARGET)/log/default
+	$(RM) -r $(A2_INSTALL_TARGET)/log/syslogger
 	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
+	@if [ -d $(A2_INSTALL_TARGET) ]; then find $(A2_INSTALL_TARGET) -empty -type d -delete; fi
 
 ## ARGEO STANDARD BUILD
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
