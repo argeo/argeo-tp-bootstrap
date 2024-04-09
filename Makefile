@@ -8,8 +8,8 @@ export NO_SDK_LEGAL := true
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
 
-ECLIPSE_RELEASE=4.30
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202312010110
+ECLIPSE_RELEASE=4.31
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202402290520
 # ECJ requires Java 20+
 ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 
@@ -166,6 +166,8 @@ prepare-sources: clean-sources download-sources
 	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
+# apply patches
+	patch -p0 < ecj-java-21-compatibility.patch
 # clean up
 	$(RM) $(ECJ_SRC)/*.jar
 	$(RM) $(ECJ_SRC)/build.xml

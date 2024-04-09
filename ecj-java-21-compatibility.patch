@@ -1,0 +1,10 @@
+--- org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch/src/org/eclipse/jdt/internal/compiler/parser/Parser.java.orig	2024-04-09 08:47:28.071992377 +0200
++++ org.argeo.tp.build/org.eclipse.jdt.core.compiler.batch/src/org/eclipse/jdt/internal/compiler/parser/Parser.java	2024-04-09 08:55:42.501631511 +0200
+@@ -56,6 +56,7 @@
+ import org.eclipse.jdt.internal.compiler.ASTVisitor;
+ import org.eclipse.jdt.internal.compiler.CompilationResult;
+ import org.eclipse.jdt.internal.compiler.ast.*;
++import org.eclipse.jdt.internal.compiler.ast.StringTemplate;
+ import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+ import org.eclipse.jdt.internal.compiler.codegen.ConstantPool;
+ import org.eclipse.jdt.internal.compiler.env.ICompilationUnit;
