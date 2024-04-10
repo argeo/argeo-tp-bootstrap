@@ -117,9 +117,9 @@ COPY=cp --reflink=auto
 all: osgi
 
 clean:
-	find $(LIB_BASE) -name "*.class" -type f -delete
-	find $(LIB_BASE) -name "*.todo" -type f -delete
-	find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
+	-find $(LIB_BASE) -name "*.class" -type f -delete
+	-find $(LIB_BASE) -name "*.todo" -type f -delete
+	-find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
 	$(RM) -rf $(BUILD_BASE)
 	$(RM) -rf $(ECJ_BIN)
 	$(RM) -rf $(SYSLOGGER_BIN)
