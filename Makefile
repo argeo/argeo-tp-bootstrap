@@ -11,8 +11,8 @@ export NO_SDK_LEGAL := true
 ## A Java 17 JDK MUST beused
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.31
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202402290520
+ECLIPSE_RELEASE=4.32
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202406010610
 
 #ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 # Note: if Java 21 is used the ECJ sources have to be patched with  
