@@ -42,10 +42,11 @@ Source code packaged as jar files usable in an Eclipse target platform.
 %setup -n %{name} -q
 
 %build
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 %configure
 export SOURCE_BUNDLES=true
 export LC_ALL=C.UTF-8
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 make %{?_smp_mflags}
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
