@@ -45,7 +45,7 @@ Source code packaged as jar files usable in an Eclipse target platform.
 %configure
 export SOURCE_BUNDLES=true
 export LC_ALL=C.UTF-8
-make %{?_smp_mflags}
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
