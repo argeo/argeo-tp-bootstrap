@@ -8,10 +8,17 @@ export NO_SDK_LEGAL := true
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
 
-ECLIPSE_RELEASE=4.30
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202312010110
-# ECJ requires Java 20+
-ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
+## A Java 17 JDK MUST beused
+## TODO check automatically
+
+ECLIPSE_RELEASE=4.32
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202406010610
+
+#ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
+# Note: if Java 21 is used the ECJ sources have to be patched with  
+# patch -p0 < ecj-java-21-compatibility.patch (see prepare-sources target)
+# For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
+ECJ_JAVA_HOME=$(JAVA_HOME)
 
 BND_VERSION=5.3.0
 OSGI_CORE_VERSION=7.0.0
@@ -36,6 +43,12 @@ SDK_BUILD_BASE ?=$(shell pwd)/output
 BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 # downloaded artifacts
 ORIGIN_BASE=$(HOME)/.cache/argeo/build/origin/bootstrap
+# base for local sources only used by compilation (but not packaged)
+LIB_BASE=$(SDK_SRC_BASE)/lib
+LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
+
+# Where Argeo Build builds the bundles the usual way (used for clean)
+BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(SDK_SRC_BASE))
 
 # ECJ sources, used for both intermediate and final build
 ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
@@ -104,6 +117,10 @@ COPY=cp --reflink=auto
 all: osgi
 
 clean:
+	-find $(LIB_BASE) -name "*.class" -type f -delete
+	-find $(LIB_BASE) -name "*.todo" -type f -delete
+	-find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
+	$(RM) -rf $(BUILD_BASE)
 	$(RM) -rf $(ECJ_BIN)
 	$(RM) -rf $(SYSLOGGER_BIN)
 	$(RM) -rf $(OSGI_ANNOTATION_BIN)
@@ -133,8 +150,14 @@ local-uninstall:
 osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 	cd $(A2_CATEGORY_LOG) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_LOG) \
 	--bundles org.argeo.tp.syslogger
-	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE_ECJ) all --category $(A2_CATEGORY_BUILD) \
+	
+# We reuse ECJ the classes already compiled by javac
+# TODO find a way to rebuild with ECJ with overriding the java.compiler module
+	mkdir -p $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin
+	cd $(ECJ_BIN) && find . -name '*.class' -exec cp --parents \{\} $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin \;
+	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE_ECJ) bundle --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch
+	
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
 	--bundles osgi.annotation biz.aQute.bndlib
 # copy ECJ MANIFEST in order to debug
@@ -142,13 +165,18 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 #cp $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/META-INF/MANIFEST.MF $(ECJ_SRC_META_INF)
 
 ## INTERMEDIATE BUILDS
-build-ecj:
+build-lib:
+	# ECJ require the javax.* packages from the java.compiler module of Java 21
+	find lib/java.compiler | grep "\.java$$" > lib/java.compiler.todo
+	$(ECJ_JAVA_HOME)/bin/javac -d lib/java.compiler @lib/java.compiler.todo
+
+build-ecj: build-lib
 	mkdir -p $(ECJ_BIN)
 # copy resources (message bundles, files required by the compiler, etc.)
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
-	find $(ECJ_SRC) | grep "\.java" > $(BOOTSTRAP_BASE)/ecj.todo
-	$(ECJ_JAVA_HOME)/bin/javac -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+	find $(ECJ_SRC) | grep "\.java$$" > $(BOOTSTRAP_BASE)/ecj.todo
+	$(ECJ_JAVA_HOME)/bin/javac --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
 	$(ECJ_INTERMEDIATE)	$(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
@@ -166,6 +194,8 @@ prepare-sources: clean-sources download-sources
 	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
+# apply patches
+	#patch -p0 < ecj-java-21-compatibility.patch
 # clean up
 	$(RM) $(ECJ_SRC)/*.jar
 	$(RM) $(ECJ_SRC)/build.xml
