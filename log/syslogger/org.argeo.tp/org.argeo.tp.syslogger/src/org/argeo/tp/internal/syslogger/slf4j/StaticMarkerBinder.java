@@ -1,8 +1,6 @@
-package org.slf4j.impl;
+package org.argeo.tp.internal.syslogger.slf4j;
 
 import org.slf4j.IMarkerFactory;
-import org.slf4j.MarkerFactory;
-import org.slf4j.helpers.BasicMarkerFactory;
 import org.slf4j.spi.MarkerFactoryBinder;
 
 /** Required for build */

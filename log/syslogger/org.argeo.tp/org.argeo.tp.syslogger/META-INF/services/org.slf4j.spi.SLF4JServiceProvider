@@ -1,1 +1,1 @@
-org.slf4j.impl.SysloggerSLF4jServiceProvider
+org.argeo.tp.internal.syslogger.slf4j.SysloggerSLF4jServiceProvider
