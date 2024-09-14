@@ -8,11 +8,11 @@ export NO_SDK_LEGAL := true
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
 
-## A Java 17 JDK MUST beused
+## A Java 17 JDK MUST be used
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.32
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202406010610
+ECLIPSE_RELEASE=4.33
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202409030240
 
 #ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 # Note: if Java 21 is used the ECJ sources have to be patched with  
@@ -246,7 +246,7 @@ prepare-sources: clean-sources download-sources
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
 	
 	# Debian changelog
-	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
+	echo "$(DIST_NAME) ($(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
 	echo "  * Based on Eclipse ECJ release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
@@ -281,7 +281,7 @@ rpm-sources: prepare-sources
 rpm-build:
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
 	mkdir -p $(RPMBUILD_BASE)/SPECS
-	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	echo "Version: $(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
