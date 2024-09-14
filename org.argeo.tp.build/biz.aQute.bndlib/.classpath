@@ -6,7 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/mbaudier/dev/git/unstable/output/a2/org.argeo.tp.build/osgi.annotation.8.1.jar"/>
-	<classpathentry kind="lib" path="/home/mbaudier/dev/git/unstable/output/a2/log/syslogger/org.argeo.tp/org.argeo.tp.syslogger.2.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/argeo-tp-bootstrap"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

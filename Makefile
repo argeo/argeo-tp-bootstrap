@@ -26,7 +26,7 @@ OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
 SLF4J_VERSION=2.0.16
 
-JAVA_SOURCE=17
+JAVA_SOURCE=22
 JAVA_TARGET=17
 
 A2_CATEGORY_BUILD = org.argeo.tp.build
@@ -88,14 +88,17 @@ $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # scripts
-JVM ?= $(JAVA_HOME)/bin/java
-ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main \
- -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
+JVM ?= $(ECJ_JAVA_HOME)/bin/java
+JAVAC ?= $(ECJ_JAVA_HOME)/bin/javac
 
-ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
+# We use JAVA_TARGET as source for calls to intermediate (vs. ECJ), in order to stay robust
+JAVAC_INTERMEDIATE ?= $(JAVAC) --enable-preview -source $(JAVA_TARGET) -target $(JAVA_TARGET)
+ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main -source $(JAVA_TARGET) -target $(JAVA_TARGET) -nowarn 
+
+ARGEO_MAKE := $(JVM) --enable-preview --source $(JAVA_TARGET) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
-ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
+ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java --enable-preview --source $(JAVA_TARGET) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
 # GNU coding standards
@@ -168,7 +171,7 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 build-lib:
 	# ECJ require the javax.* packages from the java.compiler module of Java 21
 	find lib/java.compiler | grep "\.java$$" > lib/java.compiler.todo
-	$(ECJ_JAVA_HOME)/bin/javac -d lib/java.compiler @lib/java.compiler.todo
+	$(JAVAC_INTERMEDIATE) -d lib/java.compiler @lib/java.compiler.todo
 
 build-ecj: build-lib
 	mkdir -p $(ECJ_BIN)
@@ -176,19 +179,19 @@ build-ecj: build-lib
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
 	find $(ECJ_SRC) | grep "\.java$$" > $(BOOTSTRAP_BASE)/ecj.todo
-	$(ECJ_JAVA_HOME)/bin/javac --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+	$(JAVAC_INTERMEDIATE) --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
-	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
+	$(JVM) --enable-preview -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
 
 build-osgi-annotation: build-ecj
-	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
+	$(JVM) --enable-preview -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
 
 build-bndlib: build-ecj build-syslogger build-osgi-annotation
 	# We copy everything (including .java files) because we need the many resource files
 	mkdir $(BNDLIB_BIN)
 	cp -r $(BNDLIB_SRC)/* $(BNDLIB_BIN)
-	$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) $(ECJ_INTERMEDIATE) $(BNDLIB_BIN) -d $(BNDLIB_BIN)
+	$(JVM) --enable-preview -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) $(ECJ_INTERMEDIATE) $(BNDLIB_BIN) -d $(BNDLIB_BIN)
 
 ## SOURCES PREPARATION	
 prepare-sources: clean-sources download-sources
