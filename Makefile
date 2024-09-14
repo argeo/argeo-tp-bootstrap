@@ -20,7 +20,7 @@ ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202409030240
 # For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
 ECJ_JAVA_HOME=$(JAVA_HOME)
 
-BND_VERSION=5.3.0
+BND_VERSION=7.0.0
 OSGI_CORE_VERSION=7.0.0
 OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
@@ -88,8 +88,7 @@ $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # scripts
 JVM ?= $(JAVA_HOME)/bin/java
-ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) \
- org.eclipse.jdt.internal.compiler.batch.Main \
+ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main \
  -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
 
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
@@ -179,13 +178,16 @@ build-ecj: build-lib
 	$(ECJ_JAVA_HOME)/bin/javac --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
-	$(ECJ_INTERMEDIATE)	$(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
+	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
 
 build-osgi-annotation: build-ecj
-	$(ECJ_INTERMEDIATE)	$(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
+	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
 
 build-bndlib: build-ecj build-syslogger build-osgi-annotation
-	$(ECJ_INTERMEDIATE) $(BNDLIB_SRC) -d $(BNDLIB_BIN)
+	# We copy everything (including .java files) because we need the many resource files
+	mkdir $(BNDLIB_BIN)
+	cp -r $(BNDLIB_SRC)/* $(BNDLIB_BIN)
+	$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) $(ECJ_INTERMEDIATE) $(BNDLIB_BIN) -d $(BNDLIB_BIN)
 
 ## SOURCES PREPARATION	
 prepare-sources: clean-sources download-sources
@@ -209,13 +211,14 @@ prepare-sources: clean-sources download-sources
 	mkdir -p $(BOOTSTRAP_BASE)
 	cd $(BOOTSTRAP_BASE) && tar -xzf $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 	mkdir -p $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/aQute.libg/src/* $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/biz.aQute.bndlib/src/* $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/biz.aQute.bnd.annotation/src/* $(BNDLIB_SRC)	
-	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/aQute.libg/src/* $(BNDLIB_SRC)
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bndlib/src/* $(BNDLIB_SRC)
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.annotation/src/* $(BNDLIB_SRC)	
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.util/src/* $(BNDLIB_SRC)	
+	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)
 
 # clean up BNDLIB
-	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
+#	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
 	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/junit
 
 # copy some OSGi packages to BNDLIB
@@ -230,6 +233,7 @@ prepare-sources: clean-sources download-sources
 	cp -r $(OSGI_BASE)/org/osgi/util $(BNDLIB_SRC)/org/osgi
 	cp -r $(OSGI_BASE)/org/osgi/dto $(BNDLIB_SRC)/org/osgi
 	cp -r $(OSGI_BASE)/org/osgi/service/repository $(BNDLIB_SRC)/org/osgi/service
+	cp -r $(OSGI_BASE)/org/osgi/service/serviceloader $(BNDLIB_SRC)/org/osgi/service
 	cp -r $(OSGI_BASE)/org/osgi/service/log $(BNDLIB_SRC)/org/osgi/service
 
 	## OSGI ANNOTATION
@@ -300,7 +304,7 @@ $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar:
 	
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz:
 	mkdir -p $(ORIGIN_BASE)
-	wget -c -O $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz https://github.com/bndtools/bnd/archive/refs/tags/$(BND_VERSION).REL.tar.gz
+	wget -c -O $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz https://github.com/bndtools/bnd/archive/refs/tags/$(BND_VERSION).tar.gz
 
 $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar:
 	mkdir -p $(ORIGIN_BASE)
