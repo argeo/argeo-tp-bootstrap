@@ -24,7 +24,7 @@ BND_VERSION=7.0.0
 OSGI_CORE_VERSION=7.0.0
 OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
-SLF4J_VERSION=1.7.36
+SLF4J_VERSION=2.0.16
 
 JAVA_SOURCE=17
 JAVA_TARGET=17
@@ -84,6 +84,7 @@ $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar \
 $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar \
 $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar \
+$(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # scripts
@@ -191,7 +192,9 @@ build-bndlib: build-ecj build-syslogger build-osgi-annotation
 
 ## SOURCES PREPARATION	
 prepare-sources: clean-sources download-sources
+	##
 	## ECJ
+	##
 	mkdir -p $(ECJ_SRC)
 	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
@@ -206,7 +209,9 @@ prepare-sources: clean-sources download-sources
 # TODO: keep the service files
 	$(RM) -rf  $(ECJ_SRC)/META-INF
 	
+	##
 	## BNDLIB
+	##
 # copy sources
 	mkdir -p $(BOOTSTRAP_BASE)
 	cd $(BOOTSTRAP_BASE) && tar -xzf $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
@@ -241,10 +246,13 @@ prepare-sources: clean-sources download-sources
 	cd $(OSGI_ANNOTATION_SRC) && jar -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/META-INF
 
+	##
 	## SLF4J
+	##
 	mkdir -p $(SLF4J_BASE)
 	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar
 	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
 	$(RM) -rf $(SLF4J_BASE)/META-INF
 	$(RM) -rf $(SLF4J_BASE)/org/slf4j/impl
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
@@ -325,5 +333,9 @@ $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar:
 $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar:
 	mkdir -p $(ORIGIN_BASE)
 	wget -c -O $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/$(SLF4J_VERSION)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+
+$(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar:
+	mkdir -p $(ORIGIN_BASE)
+	wget -c -O $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/log4j-over-slf4j/$(SLF4J_VERSION)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
 
 .PHONY=all clean distclean osgi download-sources deb-source clean-sources prepare-sources build-ecj build-syslogger build-osgi-annotation build-bndlib
