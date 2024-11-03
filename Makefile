@@ -51,7 +51,7 @@ LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
 BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(SDK_SRC_BASE))
 
 # ECJ sources, used for both intermediate and final build
-ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
+ECJ_SRC=$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
 ECJ_SRC_META_INF=$(abspath $(ECJ_SRC)/../META-INF)
 # compiled ECJ, used for intermediate build
 ECJ_BIN=$(BOOTSTRAP_BASE)/ecj
@@ -88,16 +88,13 @@ $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # scripts
-JVM ?= $(ECJ_JAVA_HOME)/bin/java
-JAVAC ?= $(ECJ_JAVA_HOME)/bin/javac
+JVM ?= "$(ECJ_JAVA_HOME)/bin/java"
+JAVAC ?= "$(ECJ_JAVA_HOME)/bin/javac"
 
 JAVAC_INTERMEDIATE ?= $(JAVAC) -source $(JAVA_SOURCE) -target $(JAVA_TARGET)
 ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
 
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
- $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
-
-ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
 # GNU coding standards
@@ -157,7 +154,7 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 # TODO find a way to rebuild with ECJ with overriding the java.compiler module
 	mkdir -p $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin
 	cd $(ECJ_BIN) && find . -name '*.class' -exec cp --parents \{\} $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin \;
-	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE_ECJ) bundle --category $(A2_CATEGORY_BUILD) \
+	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) bundle --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch
 	
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
