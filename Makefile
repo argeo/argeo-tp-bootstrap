@@ -39,8 +39,6 @@ SDK_BUILD_BASE ?=$(shell pwd)/output
 -include $(SDK_SRC_BASE)/branch.mk
 -include $(SDK_SRC_BASE)/sdk/branches/$(BRANCH).bnd
 
-# base for all intermediate actions
-BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 # downloaded artifacts
 ORIGIN_BASE=$(HOME)/.cache/argeo/build/origin/bootstrap
 # base for local sources only used by compilation (but not packaged)
@@ -49,6 +47,8 @@ LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
 
 # Where Argeo Build builds the bundles the usual way (used for clean)
 BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(SDK_SRC_BASE))
+# base for all intermediate actions
+BOOTSTRAP_BASE=$(BUILD_BASE)/bootstrap
 
 # ECJ sources, used for both intermediate and final build
 ECJ_SRC=$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
