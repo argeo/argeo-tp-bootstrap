@@ -14,6 +14,14 @@ export NO_SDK_LEGAL := true
 ECLIPSE_RELEASE=4.33
 ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202409030240
 
+# New language features in Java 23 make it complicated to
+# upgrade the ECJ compiler, as the java.compiler module does not build
+# with Java 17.
+# TODO check if newwer version of BND can be build with recent JDKs
+#ECLIPSE_RELEASE=4.34
+#ECLIPSE_BUILD_ID=202411201800
+#ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-$(ECLIPSE_BUILD_ID)
+
 #ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 # Note: if Java 21 is used the ECJ sources have to be patched with  
 # patch -p0 < ecj-java-21-compatibility.patch (see prepare-sources target)
