@@ -1,5 +1,5 @@
 Source: argeo-tp-bootstrap
-Section: unknown
+Section: java
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
 Build-Depends: debhelper-compat (= 13), openjdk-17-jdk, openj9-21

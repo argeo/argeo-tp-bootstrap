@@ -50,7 +50,7 @@ SDK_BUILD_BASE ?=$(shell pwd)/output
 # downloaded artifacts
 ORIGIN_BASE=$(HOME)/.cache/argeo/build/origin/bootstrap
 # base for local sources only used by compilation (but not packaged)
-LIB_BASE=$(SDK_SRC_BASE)/lib
+LIB_BASE=$(SDK_BUILD_BASE)/lib
 LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
 
 # Where Argeo Build builds the bundles the usual way (used for clean)
@@ -173,9 +173,10 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 
 ## INTERMEDIATE BUILDS
 build-lib:
+	mkdir -p $(LIB_BASE)
 	# ECJ require the javax.* packages from the java.compiler module of Java 21
-	find lib/java.compiler | grep "\.java$$" > lib/java.compiler.todo
-	$(JAVAC_INTERMEDIATE) -d lib/java.compiler @lib/java.compiler.todo
+	find lib/java.compiler | grep "\.java$$" > $(LIB_BASE)/java.compiler.todo
+	$(JAVAC_INTERMEDIATE) -d $(LIB_JAVA_COMPILER) @$(LIB_BASE)/java.compiler.todo
 
 build-ecj: build-lib
 	mkdir -p $(ECJ_BIN)
