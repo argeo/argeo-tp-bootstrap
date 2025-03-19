@@ -208,7 +208,7 @@ prepare-sources: clean-sources download-sources
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
 # apply patches
-	#patch -p0 < ecj-java-21-compatibility.patch
+#patch -p0 < ecj-java-21-compatibility.patch
 # clean up
 	$(RM) $(ECJ_SRC)/*.jar
 	$(RM) $(ECJ_SRC)/build.xml
