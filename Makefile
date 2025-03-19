@@ -139,7 +139,7 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
-local-install:
+install:
 	mkdir -p $(A2_INSTALL_TARGET)
 	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/log $(A2_INSTALL_TARGET)
 	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/org.argeo.tp.build $(A2_INSTALL_TARGET)
@@ -147,7 +147,7 @@ local-install:
 	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/org.argeo.tp.build $(A2_INSTALL_TARGET); fi;
 	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
 
-local-uninstall:
+uninstall:
 	$(RM) $(A2_INSTALL_TARGET)/log/default
 	$(RM) -r $(A2_INSTALL_TARGET)/log/syslogger
 	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
