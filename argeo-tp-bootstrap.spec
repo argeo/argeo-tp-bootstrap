@@ -1,6 +1,6 @@
 Name:           argeo-tp-bootstrap
 Release:        1%{dist}
-Summary:        Enrollment into a FREEd compatible domain
+Summary:        Components required by Argeo Build
 
 License:        LGPL
 URL:            http://www.argeo.org
@@ -50,7 +50,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make datarootdir=%{buildroot}%{_datarootdir} local-install
+make datarootdir=%{buildroot}%{_datarootdir} install
 
 %files -n argeo-tp-log
 %{_datarootdir}/a2/log/default
