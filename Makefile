@@ -54,7 +54,7 @@ LIB_BASE=$(SDK_BUILD_BASE)/lib
 LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
 
 # Where Argeo Build builds the bundles the usual way (used for clean)
-BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(SDK_SRC_BASE))
+BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(abspath $(SDK_SRC_BASE)))
 # base for all intermediate actions
 BOOTSTRAP_BASE=$(BUILD_BASE)/bootstrap
 
