@@ -11,8 +11,8 @@ export NO_SDK_LEGAL := true
 ## A Java 17 JDK MUST be used because BND is not compatible with Java 21 (SortedList issue)
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.33
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202409030240
+ECLIPSE_RELEASE=4.35
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202502280140
 
 # New language features in Java 23 make it complicated to
 # upgrade the ECJ compiler, as the java.compiler module does not build
@@ -28,11 +28,11 @@ ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202409030240
 # For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
 ECJ_JAVA_HOME=$(JAVA_HOME)
 
-BND_VERSION=7.0.0
-OSGI_CORE_VERSION=7.0.0
+BND_VERSION=7.1.0
+OSGI_CORE_VERSION=8.0.0
 OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
-SLF4J_VERSION=2.0.16
+SLF4J_VERSION=2.0.17
 
 JAVA_SOURCE=17
 JAVA_TARGET=17
@@ -121,9 +121,9 @@ RPM_DIST=
 COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
-all: osgi
+all: prepare-sources osgi
 
-clean:
+clean: clean-sources
 	-find $(LIB_BASE) -name "*.class" -type f -delete
 	-find $(LIB_BASE) -name "*.todo" -type f -delete
 	-find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
@@ -178,13 +178,15 @@ build-lib:
 	find lib/java.compiler | grep "\.java$$" > $(LIB_BASE)/java.compiler.todo
 	$(JAVAC_INTERMEDIATE) -d $(LIB_JAVA_COMPILER) @$(LIB_BASE)/java.compiler.todo
 
-build-ecj: build-lib
+#build-ecj: build-lib
+build-ecj:
 	mkdir -p $(ECJ_BIN)
 # copy resources (message bundles, files required by the compiler, etc.)
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
 	find $(ECJ_SRC) | grep "\.java$$" > $(BOOTSTRAP_BASE)/ecj.todo
-	$(JAVAC_INTERMEDIATE) --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+#	$(JAVAC_INTERMEDIATE) --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+	$(JAVAC_INTERMEDIATE) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
 	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
@@ -227,7 +229,8 @@ prepare-sources: clean-sources download-sources
 	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/aQute.libg/src/* $(BNDLIB_SRC)
 	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bndlib/src/* $(BNDLIB_SRC)
 	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.annotation/src/* $(BNDLIB_SRC)	
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.util/src/* $(BNDLIB_SRC)	
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.util/src/* $(BNDLIB_SRC)
+	patch -p0 < bnd-remove-jdt-annotation.patch	
 	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)
 
 # clean up BNDLIB
