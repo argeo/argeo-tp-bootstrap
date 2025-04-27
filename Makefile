@@ -98,6 +98,7 @@ $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 # scripts
 JVM ?= "$(ECJ_JAVA_HOME)/bin/java"
 JAVAC ?= "$(ECJ_JAVA_HOME)/bin/javac"
+JAR ?= "$(ECJ_JAVA_HOME)/bin/jar"
 
 JAVAC_INTERMEDIATE ?= $(JAVAC) -source $(JAVA_SOURCE) -target $(JAVA_TARGET)
 ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
@@ -206,7 +207,7 @@ prepare-sources: clean-sources download-sources
 	## ECJ
 	##
 	mkdir -p $(ECJ_SRC)
-	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
+	cd $(ECJ_SRC) && $(JAR) -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
 # apply patches
@@ -239,8 +240,8 @@ prepare-sources: clean-sources download-sources
 
 # copy some OSGi packages to BNDLIB
 	mkdir -p $(OSGI_BASE)
-	cd $(OSGI_BASE) && jar -xf $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar
-	cd $(OSGI_BASE) && jar -xf $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar
+	cd $(OSGI_BASE) && $(JAR) -xf $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar
+	cd $(OSGI_BASE) && $(JAR) -xf $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar
 	
 	mkdir -p $(BNDLIB_SRC)/org/osgi/service
 	cp -r $(OSGI_BASE)/org/osgi/resource $(BNDLIB_SRC)/org/osgi
@@ -254,16 +255,16 @@ prepare-sources: clean-sources download-sources
 
 	## OSGI ANNOTATION
 	mkdir -p $(OSGI_ANNOTATION_SRC)
-	cd $(OSGI_ANNOTATION_SRC) && jar -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
+	cd $(OSGI_ANNOTATION_SRC) && $(JAR) -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/META-INF
 
 	##
 	## SLF4J
 	##
 	mkdir -p $(SLF4J_BASE)
-	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar
-	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
-	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
 	$(RM) -rf $(SLF4J_BASE)/META-INF
 	$(RM) -rf $(SLF4J_BASE)/org/slf4j/impl
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
