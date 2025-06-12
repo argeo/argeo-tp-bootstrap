@@ -11,8 +11,8 @@ export NO_SDK_LEGAL := true
 ## A Java 17 JDK MUST be used because BND is not compatible with Java 21 (SortedList issue)
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.35
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202502280140
+ECLIPSE_RELEASE=4.36
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202505281830
 
 # New language features in Java 23 make it complicated to
 # upgrade the ECJ compiler, as the java.compiler module does not build
