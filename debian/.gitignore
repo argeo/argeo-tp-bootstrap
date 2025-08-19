@@ -4,3 +4,5 @@ debhelper*
 argeo-*/
 *.substvars
 /changelog
+/tmp
+*.log

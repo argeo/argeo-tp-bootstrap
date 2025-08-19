@@ -7,7 +7,13 @@ JAVA_HOME := /usr/lib/jvm/java-17-openjdk-amd64
 export JAVA_HOME
 
 # do not include sources in the jar files
-export SOURCE_BUNDLES:=true
+export SOURCE_BUNDLES := true
 
 %:
 	dh $@
+
+# explicitly delete source jars until we find a better approach
+override_dh_install:
+	dh_install
+	rm debian/argeo-tp-log/usr/share/a2/log/syslogger/org.argeo.tp/*.src.jar
+	rm debian/argeo-tp-build/usr/share/a2/org.argeo.tp.build/*.src.jar

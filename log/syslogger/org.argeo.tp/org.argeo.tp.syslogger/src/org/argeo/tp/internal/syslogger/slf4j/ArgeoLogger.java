@@ -1,5 +1,6 @@
-package org.slf4j.impl;
+package org.argeo.tp.internal.syslogger.slf4j;
 
+import org.argeo.api.syslogger.SystemLoggingAdapter;
 import org.slf4j.helpers.MarkerIgnoringBase;
 
 class ArgeoLogger extends MarkerIgnoringBase {

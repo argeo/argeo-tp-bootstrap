@@ -1,3 +1,4 @@
 /**/*.class
+/**/*.orig
 /module-info.class
 /bin/

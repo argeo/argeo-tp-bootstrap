@@ -8,11 +8,19 @@ export NO_SDK_LEGAL := true
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
 
-## A Java 17 JDK MUST beused
+## A Java 17 JDK MUST be used because BND is not compatible with Java 21 (SortedList issue)
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.32
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202406010610
+ECLIPSE_RELEASE=4.36
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202505281830
+
+# New language features in Java 23 make it complicated to
+# upgrade the ECJ compiler, as the java.compiler module does not build
+# with Java 17.
+# TODO check if newwer version of BND can be build with recent JDKs
+#ECLIPSE_RELEASE=4.34
+#ECLIPSE_BUILD_ID=202411201800
+#ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-$(ECLIPSE_BUILD_ID)
 
 #ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
 # Note: if Java 21 is used the ECJ sources have to be patched with  
@@ -20,11 +28,11 @@ ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202406010610
 # For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
 ECJ_JAVA_HOME=$(JAVA_HOME)
 
-BND_VERSION=5.3.0
-OSGI_CORE_VERSION=7.0.0
+BND_VERSION=7.1.0
+OSGI_CORE_VERSION=8.0.0
 OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
-SLF4J_VERSION=1.7.36
+SLF4J_VERSION=2.0.17
 
 JAVA_SOURCE=17
 JAVA_TARGET=17
@@ -39,19 +47,19 @@ SDK_BUILD_BASE ?=$(shell pwd)/output
 -include $(SDK_SRC_BASE)/branch.mk
 -include $(SDK_SRC_BASE)/sdk/branches/$(BRANCH).bnd
 
-# base for all intermediate actions
-BOOTSTRAP_BASE=$(SDK_BUILD_BASE)/bootstrap
 # downloaded artifacts
 ORIGIN_BASE=$(HOME)/.cache/argeo/build/origin/bootstrap
 # base for local sources only used by compilation (but not packaged)
-LIB_BASE=$(SDK_SRC_BASE)/lib
+LIB_BASE=$(SDK_BUILD_BASE)/lib
 LIB_JAVA_COMPILER=$(LIB_BASE)/java.compiler
 
 # Where Argeo Build builds the bundles the usual way (used for clean)
-BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(SDK_SRC_BASE))
+BUILD_BASE = $(SDK_BUILD_BASE)/$(shell basename $(abspath $(SDK_SRC_BASE)))
+# base for all intermediate actions
+BOOTSTRAP_BASE=$(BUILD_BASE)/bootstrap
 
 # ECJ sources, used for both intermediate and final build
-ECJ_SRC=$(SDK_SRC_BASE)/$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
+ECJ_SRC=$(A2_CATEGORY_BUILD)/org.eclipse.jdt.core.compiler.batch/src
 ECJ_SRC_META_INF=$(abspath $(ECJ_SRC)/../META-INF)
 # compiled ECJ, used for intermediate build
 ECJ_BIN=$(BOOTSTRAP_BASE)/ecj
@@ -84,18 +92,18 @@ $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar \
 $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar \
 $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar \
+$(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar \
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 
 # scripts
-JVM ?= $(JAVA_HOME)/bin/java
-ECJ_INTERMEDIATE=$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) \
- org.eclipse.jdt.internal.compiler.batch.Main \
- -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
+JVM ?= "$(ECJ_JAVA_HOME)/bin/java"
+JAVAC ?= "$(ECJ_JAVA_HOME)/bin/javac"
+JAR ?= "$(ECJ_JAVA_HOME)/bin/jar"
+
+JAVAC_INTERMEDIATE ?= $(JAVAC) -source $(JAVA_SOURCE) -target $(JAVA_TARGET)
+ECJ_INTERMEDIATE=org.eclipse.jdt.internal.compiler.batch.Main -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -nowarn 
 
 ARGEO_MAKE := $(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
- $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
-
-ARGEO_MAKE_ECJ := $(ECJ_JAVA_HOME)/bin/java -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN):$(BNDLIB_BIN) \
  $(SDK_SRC_BASE)/sdk/argeo-build/src/org/argeo/build/Make.java
 
 # GNU coding standards
@@ -114,9 +122,9 @@ RPM_DIST=
 COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
-all: osgi
+all: prepare-sources osgi
 
-clean:
+clean: clean-sources
 	-find $(LIB_BASE) -name "*.class" -type f -delete
 	-find $(LIB_BASE) -name "*.todo" -type f -delete
 	-find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
@@ -132,7 +140,7 @@ distclean:
 # make sure debuild won't package output
 	$(RM) -rf ./output
 
-local-install:
+install:
 	mkdir -p $(A2_INSTALL_TARGET)
 	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/log $(A2_INSTALL_TARGET)
 	$(COPY) -Rv $(SDK_BUILD_BASE)/a2/org.argeo.tp.build $(A2_INSTALL_TARGET)
@@ -140,7 +148,7 @@ local-install:
 	if [ -d $(SDK_BUILD_BASE)/a2.src ]; then $(COPY) -Rv $(SDK_BUILD_BASE)/a2.src/org.argeo.tp.build $(A2_INSTALL_TARGET); fi;
 	cd $(A2_INSTALL_TARGET)/log && ln -f -s syslogger default 
 
-local-uninstall:
+uninstall:
 	$(RM) $(A2_INSTALL_TARGET)/log/default
 	$(RM) -r $(A2_INSTALL_TARGET)/log/syslogger
 	$(RM) -r $(A2_INSTALL_TARGET)/org.argeo.tp.build
@@ -155,7 +163,7 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 # TODO find a way to rebuild with ECJ with overriding the java.compiler module
 	mkdir -p $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin
 	cd $(ECJ_BIN) && find . -name '*.class' -exec cp --parents \{\} $(SDK_BUILD_BASE)/argeo-tp-bootstrap/org.eclipse.jdt.core.compiler.batch/bin \;
-	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE_ECJ) bundle --category $(A2_CATEGORY_BUILD) \
+	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) bundle --category $(A2_CATEGORY_BUILD) \
 	--bundles org.eclipse.jdt.core.compiler.batch
 	
 	cd $(A2_CATEGORY_BUILD) && $(ARGEO_MAKE) all --category $(A2_CATEGORY_BUILD) \
@@ -166,36 +174,44 @@ osgi: build-ecj build-syslogger build-osgi-annotation build-bndlib
 
 ## INTERMEDIATE BUILDS
 build-lib:
+	mkdir -p $(LIB_BASE)
 	# ECJ require the javax.* packages from the java.compiler module of Java 21
-	find lib/java.compiler | grep "\.java$$" > lib/java.compiler.todo
-	$(ECJ_JAVA_HOME)/bin/javac -d lib/java.compiler @lib/java.compiler.todo
+	find lib/java.compiler | grep "\.java$$" > $(LIB_BASE)/java.compiler.todo
+	$(JAVAC_INTERMEDIATE) -d $(LIB_JAVA_COMPILER) @$(LIB_BASE)/java.compiler.todo
 
-build-ecj: build-lib
+#build-ecj: build-lib
+build-ecj:
 	mkdir -p $(ECJ_BIN)
 # copy resources (message bundles, files required by the compiler, etc.)
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
 	find $(ECJ_SRC) | grep "\.java$$" > $(BOOTSTRAP_BASE)/ecj.todo
-	$(ECJ_JAVA_HOME)/bin/javac --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -source $(JAVA_SOURCE) -target $(JAVA_TARGET) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+#	$(JAVAC_INTERMEDIATE) --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
+	$(JAVAC_INTERMEDIATE) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
-	$(ECJ_INTERMEDIATE)	$(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
+	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(SYSLOGGER_SRC) -d $(SYSLOGGER_BIN)
 
 build-osgi-annotation: build-ecj
-	$(ECJ_INTERMEDIATE)	$(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
+	$(JVM) -cp $(ECJ_BIN) $(ECJ_INTERMEDIATE) $(OSGI_ANNOTATION_SRC) -d $(OSGI_ANNOTATION_BIN)
 
 build-bndlib: build-ecj build-syslogger build-osgi-annotation
-	$(ECJ_INTERMEDIATE) $(BNDLIB_SRC) -d $(BNDLIB_BIN)
+	# We copy everything (including .java files) because we need the many resource files
+	mkdir $(BNDLIB_BIN)
+	cp -r $(BNDLIB_SRC)/* $(BNDLIB_BIN)
+	$(JVM) -cp $(ECJ_BIN):$(SYSLOGGER_BIN):$(OSGI_ANNOTATION_BIN) $(ECJ_INTERMEDIATE) $(BNDLIB_BIN) -d $(BNDLIB_BIN)
 
 ## SOURCES PREPARATION	
 prepare-sources: clean-sources download-sources
+	##
 	## ECJ
+	##
 	mkdir -p $(ECJ_SRC)
-	cd $(ECJ_SRC) && jar -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
+	cd $(ECJ_SRC) && $(JAR) -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
 # apply patches
-	#patch -p0 < ecj-java-21-compatibility.patch
+#patch -p0 < ecj-java-21-compatibility.patch
 # clean up
 	$(RM) $(ECJ_SRC)/*.jar
 	$(RM) $(ECJ_SRC)/build.xml
@@ -204,24 +220,28 @@ prepare-sources: clean-sources download-sources
 # TODO: keep the service files
 	$(RM) -rf  $(ECJ_SRC)/META-INF
 	
+	##
 	## BNDLIB
+	##
 # copy sources
 	mkdir -p $(BOOTSTRAP_BASE)
 	cd $(BOOTSTRAP_BASE) && tar -xzf $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz
 	mkdir -p $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/aQute.libg/src/* $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/biz.aQute.bndlib/src/* $(BNDLIB_SRC)
-	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL/biz.aQute.bnd.annotation/src/* $(BNDLIB_SRC)	
-	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION).REL
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/aQute.libg/src/* $(BNDLIB_SRC)
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bndlib/src/* $(BNDLIB_SRC)
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.annotation/src/* $(BNDLIB_SRC)	
+	cp -r $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)/biz.aQute.bnd.util/src/* $(BNDLIB_SRC)
+	patch -p0 < bnd-remove-jdt-annotation.patch	
+	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)
 
 # clean up BNDLIB
-	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
+#	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
 	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/junit
 
 # copy some OSGi packages to BNDLIB
 	mkdir -p $(OSGI_BASE)
-	cd $(OSGI_BASE) && jar -xf $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar
-	cd $(OSGI_BASE) && jar -xf $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar
+	cd $(OSGI_BASE) && $(JAR) -xf $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar
+	cd $(OSGI_BASE) && $(JAR) -xf $(ORIGIN_BASE)/osgi.cmpn-$(OSGI_CMPN_VERSION)-sources.jar
 	
 	mkdir -p $(BNDLIB_SRC)/org/osgi/service
 	cp -r $(OSGI_BASE)/org/osgi/resource $(BNDLIB_SRC)/org/osgi
@@ -230,23 +250,27 @@ prepare-sources: clean-sources download-sources
 	cp -r $(OSGI_BASE)/org/osgi/util $(BNDLIB_SRC)/org/osgi
 	cp -r $(OSGI_BASE)/org/osgi/dto $(BNDLIB_SRC)/org/osgi
 	cp -r $(OSGI_BASE)/org/osgi/service/repository $(BNDLIB_SRC)/org/osgi/service
+	cp -r $(OSGI_BASE)/org/osgi/service/serviceloader $(BNDLIB_SRC)/org/osgi/service
 	cp -r $(OSGI_BASE)/org/osgi/service/log $(BNDLIB_SRC)/org/osgi/service
 
 	## OSGI ANNOTATION
 	mkdir -p $(OSGI_ANNOTATION_SRC)
-	cd $(OSGI_ANNOTATION_SRC) && jar -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
+	cd $(OSGI_ANNOTATION_SRC) && $(JAR) -xf $(ORIGIN_BASE)/osgi.annotation-$(OSGI_ANNOTATION_VERSION)-sources.jar
 	$(RM) -rf $(OSGI_ANNOTATION_SRC)/META-INF
 
+	##
 	## SLF4J
+	##
 	mkdir -p $(SLF4J_BASE)
-	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar
-	cd $(SLF4J_BASE) && jar -xf $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+	cd $(SLF4J_BASE) && $(JAR) -xf $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
 	$(RM) -rf $(SLF4J_BASE)/META-INF
 	$(RM) -rf $(SLF4J_BASE)/org/slf4j/impl
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
 	
 	# Debian changelog
-	echo "$(DIST_NAME) ($(major).$(minor).$(micro)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
+	echo "$(DIST_NAME) ($(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
 	echo "  * Based on Eclipse ECJ release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
@@ -281,7 +305,7 @@ rpm-sources: prepare-sources
 rpm-build:
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
 	mkdir -p $(RPMBUILD_BASE)/SPECS
-	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	echo "Version: $(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
@@ -300,7 +324,7 @@ $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar:
 	
 $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz:
 	mkdir -p $(ORIGIN_BASE)
-	wget -c -O $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz https://github.com/bndtools/bnd/archive/refs/tags/$(BND_VERSION).REL.tar.gz
+	wget -c -O $(ORIGIN_BASE)/bnd-$(BND_VERSION).tar.gz https://github.com/bndtools/bnd/archive/refs/tags/$(BND_VERSION).tar.gz
 
 $(ORIGIN_BASE)/osgi.core-$(OSGI_CORE_VERSION)-sources.jar:
 	mkdir -p $(ORIGIN_BASE)
@@ -321,5 +345,9 @@ $(ORIGIN_BASE)/slf4j-api-$(SLF4J_VERSION)-sources.jar:
 $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar:
 	mkdir -p $(ORIGIN_BASE)
 	wget -c -O $(ORIGIN_BASE)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/$(SLF4J_VERSION)/jcl-over-slf4j-$(SLF4J_VERSION)-sources.jar
+
+$(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar:
+	mkdir -p $(ORIGIN_BASE)
+	wget -c -O $(ORIGIN_BASE)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar https://repo1.maven.org/maven2/org/slf4j/log4j-over-slf4j/$(SLF4J_VERSION)/log4j-over-slf4j-$(SLF4J_VERSION)-sources.jar
 
 .PHONY=all clean distclean osgi download-sources deb-source clean-sources prepare-sources build-ecj build-syslogger build-osgi-annotation build-bndlib

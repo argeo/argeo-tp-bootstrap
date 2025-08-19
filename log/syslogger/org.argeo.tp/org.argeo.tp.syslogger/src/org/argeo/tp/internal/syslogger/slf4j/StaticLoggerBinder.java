@@ -1,8 +1,9 @@
-package org.slf4j.impl;
+package org.argeo.tp.internal.syslogger.slf4j;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.spi.LoggerFactoryBinder;
 
+@Deprecated
 public class StaticLoggerBinder implements LoggerFactoryBinder {
 	public static final String REQUESTED_API_VERSION = "1.7";
 
@@ -26,16 +27,6 @@ public class StaticLoggerBinder implements LoggerFactoryBinder {
 
 	public static final StaticLoggerBinder getSingleton() {
 		return SINGLETON;
-	}
-
-	static class SystemLoggerFactory implements ILoggerFactory {
-
-		@Override
-		public org.slf4j.Logger getLogger(String name) {
-			SystemLoggingAdapter logger = SystemLoggingAdapter.getLog(name);
-			return new ArgeoLogger(name, logger);
-		}
-
 	}
 
 }

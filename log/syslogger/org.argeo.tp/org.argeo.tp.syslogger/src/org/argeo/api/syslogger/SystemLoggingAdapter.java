@@ -1,4 +1,4 @@
-package org.slf4j.impl;
+package org.argeo.api.syslogger;
 
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * A Commons Logging / SLF4J style logging utilities wrapping a standard Java
+ * A Commons Logging / SLF4J style logging utility wrapping a standard Java
  * platform {@link Logger}.
  */
 public interface SystemLoggingAdapter {
@@ -182,14 +182,14 @@ public interface SystemLoggingAdapter {
 
 	static SystemLoggingAdapter getLog(String name) {
 		Logger logger = System.getLogger(Objects.requireNonNull(name));
-		return new LoggerWrapper(logger);
+		return new SystemLoggerWrapper(logger);
 	}
 
 	/** A trivial implementation wrapping a platform logger. */
-	static class LoggerWrapper implements SystemLoggingAdapter {
+	static class SystemLoggerWrapper implements SystemLoggingAdapter {
 		private final Logger logger;
 
-		LoggerWrapper(Logger logger) {
+		SystemLoggerWrapper(Logger logger) {
 			this.logger = logger;
 		}
 
