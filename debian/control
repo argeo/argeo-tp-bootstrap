@@ -3,7 +3,7 @@ Section: java
 Priority: optional
 Maintainer: Mathieu Baudier <mbaudier@argeo.org>
 Build-Depends: debhelper-compat (= 13),
-               openjdk-25 | openj9-25-jdk
+               openjdk-25-jdk | openj9-25-jdk
 Standards-Version: 4.5.1
 Rules-Requires-Root: no
 
