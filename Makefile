@@ -122,7 +122,7 @@ RPM_DIST=
 COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
-all: download-sources prepare-sources osgi
+all: osgi
 
 clean: clean-sources
 	-find $(LIB_BASE) -name "*.class" -type f -delete
