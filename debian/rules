@@ -10,7 +10,7 @@ export JAVA_HOME
 export SOURCE_BUNDLES := true
 
 %:
-	dh $@
+	dh $@ --no-parallel
 
 # explicitly delete source jars until we find a better approach
 override_dh_install:

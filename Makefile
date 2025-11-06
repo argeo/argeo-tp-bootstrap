@@ -113,7 +113,7 @@ A2_INSTALL_TARGET ?= $(DESTDIR)$(datarootdir)/a2
 
 # dist
 # PACKAGER must be specified
-PACKAGER?=
+PACKAGER ?=
 DIST_NAME=argeo-tp-bootstrap
 DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
