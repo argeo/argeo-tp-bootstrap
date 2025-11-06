@@ -26,7 +26,7 @@ ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202509050730
 # Note: if Java 21 is used the ECJ sources have to be patched with  
 # patch -p0 < ecj-java-21-compatibility.patch (see prepare-sources target)
 # For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
-ECJ_JAVA_HOME=$(JAVA_HOME)
+ECJ_JAVA_HOME ?= $(JAVA_HOME)
 
 BND_VERSION=7.1.0
 OSGI_CORE_VERSION=8.0.0
