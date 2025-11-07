@@ -42,11 +42,12 @@ Source code packaged as jar files usable in an Eclipse target platform.
 %setup -n %{name} -q
 
 %build
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-25-openj9-amd64
+
 %configure
 export SOURCE_BUNDLES=true
 export LC_ALL=C.UTF-8
-make %{?_smp_mflags}
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -66,3 +67,4 @@ make datarootdir=%{buildroot}%{_datarootdir} install
 
 %files -n argeo-tp-build-source
 %{_datarootdir}/a2/org.argeo.tp.build/*.src.jar
+

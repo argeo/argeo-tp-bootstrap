@@ -11,8 +11,8 @@ export NO_SDK_LEGAL := true
 ## A Java 17 JDK MUST be used because BND is not compatible with Java 21 (SortedList issue)
 ## TODO check automatically
 
-ECLIPSE_RELEASE=4.36
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202505281830
+ECLIPSE_RELEASE=4.37
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202509050730
 
 # New language features in Java 23 make it complicated to
 # upgrade the ECJ compiler, as the java.compiler module does not build
@@ -26,7 +26,7 @@ ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202505281830
 # Note: if Java 21 is used the ECJ sources have to be patched with  
 # patch -p0 < ecj-java-21-compatibility.patch (see prepare-sources target)
 # For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
-ECJ_JAVA_HOME=$(JAVA_HOME)
+ECJ_JAVA_HOME ?= $(JAVA_HOME)
 
 BND_VERSION=7.1.0
 OSGI_CORE_VERSION=8.0.0
@@ -34,8 +34,8 @@ OSGI_CMPN_VERSION=7.0.0
 OSGI_ANNOTATION_VERSION=8.1.0
 SLF4J_VERSION=2.0.17
 
-JAVA_SOURCE=17
-JAVA_TARGET=17
+JAVA_SOURCE=21
+JAVA_TARGET=21
 
 A2_CATEGORY_BUILD = org.argeo.tp.build
 A2_CATEGORY_LOG = log/syslogger/org.argeo.tp
@@ -113,7 +113,7 @@ A2_INSTALL_TARGET ?= $(DESTDIR)$(datarootdir)/a2
 
 # dist
 # PACKAGER must be specified
-PACKAGER?=
+PACKAGER ?=
 DIST_NAME=argeo-tp-bootstrap
 DEB_CHANGELOG=$(SDK_SRC_BASE)/debian/changelog
 RPMBUILD_BASE?=$(HOME)/rpmbuild
@@ -122,7 +122,7 @@ RPM_DIST=
 COPY=cp --reflink=auto
 
 ## GENERIC TARGETS
-all: prepare-sources osgi
+all: osgi
 
 clean: clean-sources
 	-find $(LIB_BASE) -name "*.class" -type f -delete
