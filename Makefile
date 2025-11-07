@@ -124,7 +124,7 @@ COPY=cp --reflink=auto
 ## GENERIC TARGETS
 all: osgi
 
-clean: clean-sources
+clean:
 	-find $(LIB_BASE) -name "*.class" -type f -delete
 	-find $(LIB_BASE) -name "*.todo" -type f -delete
 	-find $(BOOTSTRAP_BASE) -name "*.todo" -type f -delete
