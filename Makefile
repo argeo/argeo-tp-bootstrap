@@ -305,7 +305,8 @@ rpm-sources: prepare-sources
 rpm-build:
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
 	mkdir -p $(RPMBUILD_BASE)/SPECS
-	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+# Use + in RPM version until we figure a better way to package
+	echo "Version: $(major).$(minor).$(micro)+eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
