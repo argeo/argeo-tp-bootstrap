@@ -275,26 +275,19 @@ clean-sources:
 rpm-sources: prepare-sources
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
 	mkdir -p $(RPMBUILD_BASE)/SPECS
-#	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' 
-	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
-	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz .
+	cd $(SDK_SRC_BASE)/.. && tar --exclude='output' --exclude-vcs \
+	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz argeo-tp-bootstrap
 	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
 	 -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
-rpm-build: prepare-sources
-# TODO factorise or merge with rpm-sources, using the actual src.rpm for the build
-	mkdir -p $(RPMBUILD_BASE)/SOURCES
-	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
-	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz .
-	mkdir -p $(RPMBUILD_BASE)/SPECS
-	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+rpm-build: rpm-sources
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
-	 -ba $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	 --rebuild $(RPMBUILD_BASE)/SRPMS/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).src.rpm
 
 deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
