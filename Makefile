@@ -287,7 +287,7 @@ rpm-build: rpm-sources
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
-	 --rebuild $(RPMBUILD_BASE)/SRPMS/$(DIST_NAME)-$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)-1$(RPM_DIST)".src.rpm
+	 --rebuild $(RPMBUILD_BASE)/SRPMS/$(DIST_NAME)-$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)-1$(RPM_DIST).src.rpm
 
 deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
