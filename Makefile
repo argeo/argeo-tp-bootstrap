@@ -278,12 +278,17 @@ rpm-sources: prepare-sources
 #	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' 
 	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
 	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz .
-	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
-	rpmbuild -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	rpmbuild \
+	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
+	 -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
-rpm-build:
+rpm-build: prepare-sources
+# TODO factorise or merge with rpm-sources, using the actual src.rpm for the build
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
+	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
+	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz .
 	mkdir -p $(RPMBUILD_BASE)/SPECS
 	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
