@@ -2,30 +2,15 @@
 
 export NO_SDK_LEGAL := true
 
-## FIXME
 ## DON'T FORGET TO UPDATE
 ## org.argeo.tp.build/*/bnd.bnd
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
 
-## A Java 17 JDK MUST be used because BND is not compatible with Java 21 (SortedList issue)
-## TODO check automatically
-
 ECLIPSE_RELEASE=4.37
 ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202509050730
 
-# New language features in Java 23 make it complicated to
-# upgrade the ECJ compiler, as the java.compiler module does not build
-# with Java 17.
-# TODO check if newwer version of BND can be build with recent JDKs
-#ECLIPSE_RELEASE=4.34
-#ECLIPSE_BUILD_ID=202411201800
-#ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-$(ECLIPSE_BUILD_ID)
-
-#ECJ_JAVA_HOME=/usr/lib/jvm/java-21-openj9-amd64
-# Note: if Java 21 is used the ECJ sources have to be patched with  
-# patch -p0 < ecj-java-21-compatibility.patch (see prepare-sources target)
-# For the time being we use the default Java which MUST be Java 17 (otherwise bndlib doesn't build anyhow)
+# !! REQUIRES AT LEAST JAVA 25
 ECJ_JAVA_HOME ?= $(JAVA_HOME)
 
 BND_VERSION=7.1.0
@@ -83,7 +68,6 @@ OSGI_ANNOTATION_BIN=$(BOOTSTRAP_BASE)/osgi-annotation
 SLF4J_BASE=$(BOOTSTRAP_BASE)/slf4j-src
 # intermediate directory to unpack OSGi sources
 OSGI_BASE=$(BOOTSTRAP_BASE)/osgi-src
-
 
 SOURCE_ARCHIVES=\
 $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar \
@@ -186,7 +170,6 @@ build-ecj:
 # (java files will be copied too, but they are irrelevant here)
 	cp -r $(ECJ_SRC)/org $(ECJ_BIN)
 	find $(ECJ_SRC) | grep "\.java$$" > $(BOOTSTRAP_BASE)/ecj.todo
-#	$(JAVAC_INTERMEDIATE) --upgrade-module-path $(LIB_JAVA_COMPILER) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	$(JAVAC_INTERMEDIATE) -d $(ECJ_BIN) -Xlint:none @$(BOOTSTRAP_BASE)/ecj.todo
 	
 build-syslogger: build-ecj
@@ -210,8 +193,6 @@ prepare-sources: clean-sources download-sources
 	cd $(ECJ_SRC) && $(JAR) -xf $(ORIGIN_BASE)/ecjsrc-$(ECLIPSE_RELEASE).jar
 # remove ant-dependent class
 	$(RM) $(ECJ_SRC)/org/eclipse/jdt/core/JDTCompilerAdapter.java
-# apply patches
-#patch -p0 < ecj-java-21-compatibility.patch
 # clean up
 	$(RM) $(ECJ_SRC)/*.jar
 	$(RM) $(ECJ_SRC)/build.xml
@@ -235,7 +216,6 @@ prepare-sources: clean-sources download-sources
 	$(RM) -rf $(BOOTSTRAP_BASE)/bnd-$(BND_VERSION)
 
 # clean up BNDLIB
-#	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/annotation/spi
 	$(RM) -rf $(BNDLIB_SRC)/aQute/bnd/junit
 
 # copy some OSGi packages to BNDLIB
@@ -270,7 +250,7 @@ prepare-sources: clean-sources download-sources
 	cp -r $(SLF4J_BASE)/org $(SYSLOGGER_SRC)
 	
 	# Debian changelog
-	echo "$(DIST_NAME) ($(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
+	echo "$(DIST_NAME) ($(major).$(minor).$(micro)+eclipse$(ECLIPSE_RELEASE)) $(BRANCH); urgency=medium" > $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
 	echo "  * Based on Eclipse ECJ release $(ECLIPSE_RELEASE)" >> $(DEB_CHANGELOG)
 	echo >> $(DEB_CHANGELOG)
@@ -295,21 +275,19 @@ clean-sources:
 rpm-sources: prepare-sources
 	mkdir -p $(RPMBUILD_BASE)/SOURCES
 	mkdir -p $(RPMBUILD_BASE)/SPECS
-#	 --transform 's,^,$(DIST_NAME)-$(major).$(minor).$(micro)/,' 
-	cd $(SDK_SRC_BASE) && tar --exclude='output' --exclude-vcs \
-	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro).tar.xz .
-	echo "Version: $(major).$(minor).$(micro)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	cd $(SDK_SRC_BASE)/.. && tar --exclude='output' --exclude-vcs \
+	  -cJf $(RPMBUILD_BASE)/SOURCES/$(DIST_NAME)_$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE).tar.xz argeo-tp-bootstrap
+	echo "Version: $(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
-	rpmbuild -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	rpmbuild \
+	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
+	 -bs $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 
-rpm-build:
-	mkdir -p $(RPMBUILD_BASE)/SOURCES
-	mkdir -p $(RPMBUILD_BASE)/SPECS
-	echo "Version: $(major).$(minor).$(micro)+$(ECLIPSE_RELEASE)" > $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+rpm-build: rpm-sources
 	cat $(SDK_SRC_BASE)/$(DIST_NAME).spec >> $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
 	rpmbuild --clean --rmsource --nodeps \
 	 --define "_topdir $(RPMBUILD_BASE)" --define "dist $(RPM_DIST)" \
-	 -ba $(RPMBUILD_BASE)/SPECS/$(DIST_NAME).spec
+	 --rebuild $(RPMBUILD_BASE)/SRPMS/$(DIST_NAME)-$(major).$(minor).$(micro)^eclipse$(ECLIPSE_RELEASE)-1$(RPM_DIST).src.rpm
 
 deb-source: distclean clean-sources prepare-sources
 	debuild --no-sign -S
