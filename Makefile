@@ -6,9 +6,8 @@ export NO_SDK_LEGAL := true
 ## org.argeo.tp.build/*/bnd.bnd
 ## WITH THE UPDATED ECJ AND OSGi VERSIONS!
 ## 
-
-ECLIPSE_RELEASE=4.37
-ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202509050730
+ECLIPSE_RELEASE=4.38
+ECLIPSE_DROP=R-$(ECLIPSE_RELEASE)-202512010920
 
 # !! REQUIRES AT LEAST JAVA 25
 ECJ_JAVA_HOME ?= $(JAVA_HOME)
@@ -256,7 +255,7 @@ prepare-sources: clean-sources download-sources
 	echo >> $(DEB_CHANGELOG)
 	echo " -- $(PACKAGER)  $(shell date -u -R)">> $(DEB_CHANGELOG)	
 
-clean-sources:
+clean-sources: clean
 	$(RM) -rf $(ECJ_SRC)/*
 	$(RM) -rf $(ECJ_SRC_META_INF)
 	$(RM) -rf $(BNDLIB_SRC)/*
