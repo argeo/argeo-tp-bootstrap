@@ -9,7 +9,7 @@ Source0:        %{name}_%{version}.tar.xz
 BuildArch:      noarch
 
 BuildRequires: make
-BuildRequires: java-17-openjdk-devel
+BuildRequires: java-25-openjdk-devel
 
 %description
 
